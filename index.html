@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ระบบตารางกะ 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/email-tool.css">
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo"><span class="dot"></span><span>ระบบตารางกะ 2026</span></div>
+    <div class="login-field">
+      <label>อีเมล</label>
+      <input id="loginEmail" type="email" placeholder="email@example.com" autocomplete="email">
+    </div>
+    <div class="login-field">
+      <label>รหัสผ่าน</label>
+      <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-err" id="loginErr"></div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <div style="text-align:right;margin-top:8px">
+      <button class="login-forgot" onclick="doForgotPassword()">ลืมรหัสผ่าน?</button>
+    </div>
+  </div>
+</div>
+
+<!-- Side menu overlay -->
+<div class="side-overlay" id="sideOverlay" onclick="closeSideMenu()"></div>
+
+<!-- Side menu -->
+<div class="side-menu" id="sideMenu">
+  <div class="sm-head" style="position:relative">
+    <div class="sm-title">⚙️ เมนู</div>
+    <div class="sm-user" id="smUser"></div>
+  </div>
+
+  <!-- Export -->
+  <div class="sm-section">
+    <div class="sm-label">Export</div>
+    <button class="sm-item" onclick="closeSideMenu();exportExcel()">
+      <span class="sm-icon green">📊</span>
+      <span class="sm-txt">Export Excel<small>Timework OT รายเดือน</small></span>
+    </button>
+  </div>
+
+  <!-- เกี่ยวกับ -->
+  <div class="sm-section">
+    <div class="sm-label">สรุป OT</div>
+    <button class="sm-item" onclick="closeSideMenu();document.querySelector('.ot-panel').scrollIntoView({behavior:'smooth'})">
+      <span class="sm-icon orange">📈</span>
+      <span class="sm-txt">ดูสรุป OT ประจำเดือน<small>เลื่อนไปดูตารางสรุปด้านล่าง</small></span>
+    </button>
+  </div>
+
+  <!-- เครื่องมือ -->
+  <div class="sm-section">
+    <div class="sm-label">เครื่องมือ</div>
+    <button class="sm-item" onclick="closeSideMenu();showView('emailtool')">
+      <span class="sm-icon blue">✉️</span>
+      <span class="sm-txt">MAX Email Tool<small>Generate & Send Email</small></span>
+    </button>
+    <button class="sm-item" onclick="closeSideMenu();showView('modmax')">
+      <span class="sm-icon" style="background:#DBEAFE">🔄</span>
+      <span class="sm-txt">Mod MAX<small>แปลง ID → JSON + ตรวจสอบ Postman</small></span>
+    </button>
+    <button class="sm-item" onclick="closeSideMenu();showView('urls')">
+      <span class="sm-icon purple">🔗</span>
+      <span class="sm-txt">Internal URLs<small>ลิงก์เว็บที่ใช้งานในทีม</small></span>
+    </button>
+  </div>
+
+  <!-- Account -->
+  <div class="sm-section" style="margin-top:auto">
+    <div class="sm-label">บัญชี</div>
+    <button class="sm-item danger" onclick="closeSideMenu();doLogout()">
+      <span class="sm-icon red">🚪</span>
+      <span class="sm-txt">ออกจากระบบ<small id="smEmail"></small></span>
+    </button>
+  </div>
+</div>
+
+<div id="mainWrap">
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="hamburger" onclick="openSideMenu()" title="เมนู" style="display:none">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="header-title"><span class="dot"></span>ระบบตารางกะ 2026</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span id="syncBadge" style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.15);color:#fff;display:none"></span>
+    <span id="userBadge" style="font-size:11px;color:rgba(255,255,255,.8);display:none"></span>
+    <button id="logoutBtn" onclick="doLogout()" style="display:none;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:inherit">ออกจากระบบ</button>
+    <div class="header-right" id="hdrM"></div>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay" style="position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;backdrop-filter:blur(4px)">
+  <div style="width:40px;height:40px;border:3px solid rgba(255,255,255,.2);border-top-color:#38BDF8;border-radius:50%;animation:spin .8s linear infinite"></div>
+  <div style="color:#fff;font-size:13px;font-family:'Noto Sans Thai',sans-serif" id="loadingMsg">กำลังเชื่อมต่อ Firebase...</div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</div>
+
+<div id="panelBackdrop" onclick="showView('schedule')"></div>
+<div id="toastHost"></div>
+<div id="scheduleView">
+<div class="mnav" id="mnav"></div>
+
+<div class="legend">
+  <span class="li"><span class="ld" style="background:var(--am-bg);border:1px solid var(--am-bd)"></span>เช้า (08-16)</span>
+  <span class="li"><span class="ld" style="background:var(--pm-bg);border:1px solid var(--pm-bd)"></span>บ่าย (14-22)</span>
+  <span class="li"><span class="ld" style="background:var(--both-bg);border:1px solid var(--both-bd)"></span>เช้า+บ่าย (07-23)</span>
+  <span class="li"><span class="ld" style="background:var(--hol-bg);border:1px solid #FCA5A5"></span>วันหยุดประจำปี</span>
+  <span class="li"><span class="ld" style="background:var(--fest-bg);border:1px solid var(--fest-bd)"></span>วันเทศกาล</span>
+  <span class="lg-sep"></span>
+  <span class="li"><span class="badge badge-vac">ลาพ</span>ลาพักผ่อน</span>
+  <span class="li"><span class="badge badge-per">ลาก</span>ลากิจ</span>
+  <span class="li"><span class="badge badge-sick">ลาป</span>ลาป่วย</span>
+  <span class="lg-sep"></span>
+  <span class="li"><span class="badge badge-sw">สลับ</span>สลับกะ</span>
+  <span class="li"><span class="badge badge-ot">OT</span>ทำ OT</span>
+</div>
+
+<div class="main">
+  <div class="tbl-wrap">
+    <table id="tbl">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="ot-panel">
+    <div class="ot-ph" onclick="toggleOT()">
+      <span>📊 สรุป OT ประจำเดือน</span>
+      <div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">
+        <button onclick="exportExcel()" title="ดาวน์โหลดไฟล์ Excel แบบฟอร์มเบิก OT/ค่ากะรายบุคคลของเดือนนี้" style="background:#16A34A;color:#fff;border:none;border-radius:6px;padding:4px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">⬇ Export Excel</button>
+        <span id="ottog">▼</span>
+      </div>
+    </div>
+    <div id="otbody">
+      <div class="ot-wrap">
+        <table class="ot-tbl">
+          <thead>
+            <tr>
+              <th rowspan="2" style="text-align:left">ชื่อ</th>
+              <th rowspan="2">ทีม</th>
+              <th colspan="3" style="border-bottom:0.5px solid var(--line);background:var(--app-light);color:var(--app-dark)">OT ×1 (ชม.)</th>
+              <th rowspan="2">OT ×1.5<br><small>ชม.</small></th>
+              <th rowspan="2">OT ×3<br><small>ชม.</small></th>
+              <th rowspan="2">รวม OT<br><small>ชม.</small></th>
+              <th colspan="2" style="border-bottom:0.5px solid var(--line);background:var(--info-bg);color:var(--info-text)">ค่ากะบ่าย</th>
+              <th rowspan="2" style="text-align:left">รายละเอียด</th>
+            </tr>
+            <tr>
+              <th style="font-size:9px;background:var(--app-light);color:var(--app-dark)">วันหยุดประจำปี</th>
+              <th style="font-size:9px;background:var(--app-light);color:var(--app-dark)">จากการลา</th>
+              <th style="font-size:9px;background:var(--fest-bg);color:var(--app-dark)">รวม ×1</th>
+              <th style="font-size:9px;background:var(--info-bg);color:var(--info-text)">จำนวนกะ</th>
+              <th style="font-size:9px;background:var(--info-bg);color:var(--info-text)">บาท</th>
+            </tr>
+          </thead>
+          <tbody id="otrows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /scheduleView -->
+</div><!-- closes an internally-unclosed div inside scheduleView's markup -->
+
+<!-- ═══════════════════════════════════════════════
+     INTERNAL URLS PAGE
+     ═══════════════════════════════════════════════ -->
+<div id="urlsPage" style="position:fixed;top:0;right:0;bottom:0;width:min(1040px,94vw);display:flex;flex-direction:column;background:var(--canvas);z-index:400;box-shadow:-10px 0 44px rgba(11,19,36,.28);overflow-y:auto;transform:translateX(100%);transition:.3s transform cubic-bezier(.4,0,.2,1)">
+  <div class="et-subheader">
+    <button class="et-back" onclick="showView('schedule')" title="ปิดหน้าต่าง">✕ ปิด</button>
+    <span class="et-title">🔗 Internal URLs</span>
+  </div>
+  <div style="padding:20px 24px;max-width:860px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px">
+      <div style="font-size:12px;color:var(--ink2)">ลิงก์เว็บและเครื่องมือที่ใช้งานภายในทีม — คลิกเพื่อเปิดในแท็บใหม่</div>
+      <button onclick="openAddUrl()" class="btn btn-ok" style="flex-shrink:0">+ เพิ่ม URL</button>
+    </div>
+
+    <!-- URL Cards will be rendered by JS -->
+    <div id="urlCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     MOD MAX PAGE
+     ═══════════════════════════════════════════════ -->
+<div id="modmaxPage">
+  <div class="et-subheader">
+    <button class="et-back" onclick="showView('schedule')" title="ปิดหน้าต่าง">✕ ปิด</button>
+    <span class="et-title">🔄 Mod MAX <span class="brand-badge" style="background:var(--app-light);color:var(--app-dark);font-size:10px;padding:2px 8px;border-radius:20px;">AIS Internal</span></span>
+  </div>
+
+<div class="mm-container">
+  <h1>🔄 แปลง ID เป็น JSON + ตรวจสอบผลลัพธ์ (True/False)</h1>
+  <p class="desc">ขั้นตอนที่ 1: วางข้อมูล Acc + ID (คัดลอกจาก Excel 2 คอลัมน์) เพื่อสร้าง JSON ส่งเข้า Postman<br>
+  ขั้นตอนที่ 2: เมื่อได้ผลลัพธ์จาก Postman กลับมา ให้วางผลลัพธ์นั้นในกล่องด้านล่างเพื่อจับคู่กลับเป็น Acc พร้อมสถานะ True/False</p>
+
+  <h2 class="section-title">ขั้นตอนที่ 1: สร้าง JSON สำหรับส่ง</h2>
+  <div class="grid">
+    <div class="panel">
+      <h3>วางข้อมูล (Acc [Tab] ID) 1 บรรทัดต่อ 1 รายการ</h3>
+      <textarea id="input" placeholder="8880321944	df0a24d7-09b2-4939-a6fc-46643d066473
+8881773162	c9011ee7-cc6f-41d2-9a98-aa607e5435ce"></textarea>
+      <div class="controls">
+        <button onclick="mm_convert()" title="แปลง Account+ID ที่วางไว้เป็น JSON สำหรับส่ง Postman">แปลงเป็น JSON</button>
+        <button class="secondary" onclick="mm_clearInput()">ล้างข้อมูล</button>
+        <span class="info" id="countInfo"></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>ผลลัพธ์ JSON (แบ่งชุดละสูงสุด 10 ตัว)</h3>
+      <div id="output"><p class="info">ยังไม่มีข้อมูล — วางข้อมูลแล้วกดปุ่ม "แปลงเป็น JSON"</p></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">ขั้นตอนที่ 2: ตรวจสอบผลลัพธ์ที่ได้จาก Postman</h2>
+  <div class="grid">
+    <div class="panel">
+      <h3>วางผลลัพธ์ JSON ที่ได้จาก Postman</h3>
+      <textarea id="resultInput" placeholder='วาง JSON response ที่นี่ เช่น
+{
+  "Result": {
+    "ResultData": [
+      { "partnerUserID": "...", "isSuccess": true },
+      { "partnerUserID": "...", "isSuccess": false, "reason": "..." }
+    ]
+  }
+}'></textarea>
+      <div class="controls">
+        <button onclick="mm_checkResult()" title="วางผลลัพธ์ JSON จาก Postman เพื่อจับคู่กลับเป็น Acc + สถานะ">ตรวจสอบผลลัพธ์</button>
+        <button class="secondary" onclick="mm_clearResult()">ล้างข้อมูล</button>
+      </div>
+      <p class="info">* ระบบจะจับคู่ PID กับ Acc ที่วางไว้ในขั้นตอนที่ 1 โดยอัตโนมัติ (รองรับการวางผลลัพธ์หลายชุดสะสมได้)</p>
+    </div>
+
+    <div class="panel">
+      <h3>ผลลัพธ์ที่จับคู่แล้ว</h3>
+      <div id="resultOutput"><p class="info">ยังไม่มีข้อมูล — ทำขั้นตอนที่ 1 ก่อน แล้ววางผลลัพธ์ JSON ที่นี่</p></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+<div id="emailToolPage">
+  <div class="et-subheader">
+    <button class="et-back" onclick="showView('schedule')" title="ปิดหน้าต่าง">✕ ปิด</button>
+    <span class="et-title">✉️ MAX Email Tool <span class="brand-badge" style="background:var(--app-light);color:var(--app-dark);font-size:10px;padding:2px 8px;border-radius:20px;">AIS Internal</span></span>
+    <div class="gender-bar">
+      <span>คำลงท้าย</span>
+      <button class="gender-btn active" id="genderKrab" onclick="setGender('krab')">ครับ</button>
+      <button class="gender-btn" id="genderKa" onclick="setGender('ka')">ค่ะ</button>
+    </div>
+  </div>
+  <!-- Header -->
+
+
+  <!-- Main -->
+  <div class="et-main">
+    <!-- Tab Nav -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" role="tab" onclick="switchTab('forgotTab', this)">
+        <span class="tab-icon">🔍</span><span class="tab-label">Forgot MAX</span>
+      </button>
+      <button class="tab-btn" role="tab" onclick="switchTab('ddnsTab', this)">
+        <span class="tab-icon">🌐</span><span class="tab-label">3BB DDNS</span>
+      </button>
+      <button class="tab-btn" role="tab" onclick="switchTab('vdoTab', this)">
+        <span class="tab-icon">🎬</span><span class="tab-label">ประสาน VDO Support</span>
+      </button>
+      <button class="tab-btn" role="tab" onclick="switchTab('foaTab', this)">
+        <span class="tab-icon">📋</span><span class="tab-label">Reject FOA</span>
+      </button>
+      <button class="tab-btn" role="tab" onclick="switchTab('fibreTab', this)">
+        <span class="tab-icon">📡</span><span class="tab-label">ประสาน CC แก้ Package</span>
+      </button>
+      <button class="tab-btn" role="tab" onclick="switchTab('netflixTab', this)">
+        <span class="tab-icon">🎥</span><span class="tab-label">Netflix</span>
+      </button>
+    </nav>
+
+    <!-- Forgot MAX -->
+    <div id="forgotTab" class="panel active" role="main">
+      <div class="form-group">
+        <label for="internetId">Internet ID</label>
+        <div class="input-wrap">
+          <input type="text" id="internetId" placeholder="888xxxxxxx" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="error-msg" id="internetIdError">⚠ Please enter the Internet ID</div>
+      </div>
+
+      <div class="form-group">
+        <label for="privateId">Private ID</label>
+        <div class="input-wrap">
+          <input type="text" id="privateId" placeholder="f3d4ebec-df87-458c-969c-0665efc4eccf" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="error-msg" id="privateIdError">⚠ Please enter the Private ID</div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateMail()">
+          <span>⚡</span> Generate Mail
+        </button>
+        <button class="btn btn-success" onclick="sendMail()">
+          <span>📧</span> Send Mail
+        </button>
+        <button class="btn btn-danger" onclick="confirmClear()">
+          <span>🗑</span> Clear
+        </button>
+      </div>
+
+      <div class="preview-header">
+        <label for="emailPreview" style="margin-bottom:0; text-transform:uppercase;">Email Preview</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="copy-toast" id="copyToast">✅ Copied!</span>
+          <button class="btn btn-ghost" style="padding:6px 14px;font-size:13px;" onclick="copyPreview()">
+            📋 Copy
+          </button>
+        </div>
+      </div>
+      <textarea id="emailPreview" rows="10" class="preview-area" readonly placeholder="Generate a mail to see the preview here…"></textarea>
+    </div>
+
+    <!-- 3BB DDNS (รวม) -->
+    <div id="ddnsTab" class="panel" role="tabpanel">
+
+      <div class="alert">
+        <span class="alert-icon">📎</span>
+        <strong>หมายเหตุ:</strong> หากมีภาพ Error ให้แนบรูปเพิ่มเติมใน Outlook ก่อนกด Send ด้วยครับ
+      </div>
+
+      <div class="form-group">
+        <label for="ddnsIssueType">ประเภทปัญหา</label>
+        <select id="ddnsIssueType" onchange="onDdnsIssueChange()">
+          <option value="cancel">ขอยกเลิก 3BB DDNS</option>
+          <option value="register">สมัครใช้งาน 3BB DDNS ไม่ได้</option>
+        </select>
+      </div>
+
+      <!-- Shared fields -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ddnsTicket">Ticket No.</label>
+          <input type="text" id="ddnsTicket" placeholder="26-xxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="ddnsTicketError">⚠ กรุณากรอก Ticket No.</div>
+        </div>
+        <div class="form-group">
+          <label for="ddnsAccountNo">Account No.</label>
+          <input type="text" id="ddnsAccountNo" placeholder="88xxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="ddnsAccountNoError">⚠ กรุณากรอก Account No.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="ddnsTenant">ชื่อผู้เช่า</label>
+        <input type="text" id="ddnsTenant" placeholder="บริษัท xxxxxxxxxx จำกัด" autocomplete="off" />
+        <div class="error-msg" id="ddnsTenantError">⚠ กรุณากรอกชื่อผู้เช่า</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ddnsUsername">Username</label>
+          <input type="text" id="ddnsUsername" placeholder="xxxxxxxx@3bb" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="ddnsUsernameError">⚠ กรุณากรอก Username</div>
+        </div>
+        <!-- Cancel-only field -->
+        <div class="form-group" id="ddnsDomainWrap">
+          <label for="ddnsDomain">Domain</label>
+          <input type="text" id="ddnsDomain" placeholder="xxxxxxxx.3bbddns.com" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="ddnsDomainError">⚠ กรุณากรอก Domain</div>
+        </div>
+        <!-- Register-only field -->
+        <div class="form-group" id="ddnsPhoneWrap" style="display:none;">
+          <label for="ddnsPhone">เบอร์ในระบบ</label>
+          <input type="text" id="ddnsPhone" placeholder="0xxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="ddnsPhoneError">⚠ กรุณากรอกเบอร์ในระบบ</div>
+        </div>
+      </div>
+
+      <!-- Cancel-only field -->
+      <div class="form-group" id="ddnsPortWrap">
+        <label for="ddnsPort">Port Default</label>
+        <input type="text" id="ddnsPort" placeholder="xxxxx-xxxxx" autocomplete="off" spellcheck="false" />
+        <div class="error-msg" id="ddnsPortError">⚠ กรุณากรอก Port Default</div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateDdnsMail()">
+          <span>⚡</span> Generate Mail
+        </button>
+        <button class="btn btn-success" onclick="sendDdnsMail()">
+          <span>📧</span> Send Mail
+        </button>
+        <button class="btn btn-danger" onclick="confirmClearDdns()">
+          <span>🗑</span> Clear
+        </button>
+      </div>
+
+      <div class="preview-header">
+        <label for="ddnsEmailPreview" style="margin-bottom:0; text-transform:uppercase;">Email Preview</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="copy-toast" id="ddnsCopyToast">✅ Copied!</span>
+          <button class="btn btn-ghost" style="padding:6px 14px;font-size:13px;" onclick="copyDdnsPreview()">
+            📋 Copy
+          </button>
+        </div>
+      </div>
+      <textarea id="ddnsEmailPreview" rows="12" class="preview-area" readonly placeholder="Generate a mail to see the preview here…"></textarea>
+    </div>
+
+    <!-- ประสาน VDO Support -->
+    <div id="vdoTab" class="panel" role="tabpanel">
+
+      <div class="alert">
+        <span class="alert-icon">📎</span>
+        <strong>หมายเหตุ:</strong> หากมีภาพหน้าจอ Error ให้แนบรูปเพิ่มเติมใน Outlook ก่อนกด Send ด้วยครับ
+      </div>
+
+      <div class="form-group">
+          <label for="vdoService">Service</label>
+          <select id="vdoService" onchange="onVdoServiceChange()">
+            <option value="MAX">MAX</option>
+            <option value="iQIYI">iQIYI</option>
+            <option value="VIU">VIU</option>
+            <option value="Disney+">Disney+</option>
+            <option value="MONOMAX">MONOMAX</option>
+            <option value="Netflix">Netflix</option>
+            <option value="Prime">Prime Video</option>
+            <option value="__other__">Other (ระบุเอง)</option>
+          </select>
+        </div>
+        <div class="form-group" id="vdoServiceOtherWrap" style="display:none;">
+          <label for="vdoServiceOther">ระบุ Service</label>
+          <input type="text" id="vdoServiceOther" placeholder="ชื่อ Service" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="vdoServiceOtherError">⚠ กรุณาระบุ Service</div>
+        </div>
+
+        <div class="form-group">
+          <label for="vdoInternetId">Internet ID</label>
+          <input type="text" id="vdoInternetId" placeholder="88xxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="vdoInternetIdError">⚠ กรุณากรอก Internet ID</div>
+        </div>
+
+      <div class="form-group">
+        <label for="vdoPackage">Package</label>
+        <input type="text" id="vdoPackage" placeholder="NGB_xxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false" />
+        <div class="error-msg" id="vdoPackageError">⚠ กรุณากรอก Package</div>
+      </div>
+
+      <div class="form-group">
+        <label for="vdoErrorType">อาการที่พบ</label>
+        <select id="vdoErrorType" onchange="onVdoErrorTypeChange()">
+        </select>
+        <div class="error-msg" id="vdoErrorTypeError">⚠ กรุณาเลือกอาการที่พบ</div>
+      </div>
+
+      <div class="form-group" id="vdoErrorOtherWrap" style="display:none;">
+        <label for="vdoErrorOther">ระบุอาการที่พบ</label>
+        <textarea id="vdoErrorOther" rows="3" class="input-area" placeholder="อธิบายอาการที่พบ เช่น ตรวจสอบผ่าน Postman ขึ้น Error xxx..."></textarea>
+        <div class="error-msg" id="vdoErrorOtherError">⚠ กรุณาระบุอาการที่พบ</div>
+      </div>
+
+      <div class="form-group" id="vdoExtraNoteWrap">
+        <label for="vdoExtraNote">หมายเหตุเพิ่มเติม <span style="font-weight:400;color:var(--text-muted);">— ไม่บังคับ</span></label>
+        <textarea id="vdoExtraNote" rows="2" class="input-area" placeholder="ข้อมูลเพิ่มเติมที่ต้องการแจ้ง..."></textarea>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateVdoMail()">
+          <span>⚡</span> Generate Mail
+        </button>
+        <button class="btn btn-success" onclick="sendVdoMail()">
+          <span>📧</span> Send Mail
+        </button>
+        <button class="btn btn-danger" onclick="confirmClearVdo()">
+          <span>🗑</span> Clear
+        </button>
+      </div>
+
+      <div class="preview-header">
+        <label for="vdoEmailPreview" style="margin-bottom:0; text-transform:uppercase;">Email Preview</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="copy-toast" id="vdoCopyToast">✅ Copied!</span>
+          <button class="btn btn-ghost" style="padding:6px 14px;font-size:13px;" onclick="copyVdoPreview()">
+            📋 Copy
+          </button>
+        </div>
+      </div>
+      <textarea id="vdoEmailPreview" rows="13" class="preview-area" readonly placeholder="Generate a mail to see the preview here…"></textarea>
+    </div>
+
+    <!-- Reject FOA -->
+    <div id="foaTab" class="panel" role="tabpanel">
+
+      <div class="form-group">
+        <label for="foaActivity">Activity</label>
+        <select id="foaActivity" onchange="onFoaActivityChange()">
+          <option value="Reject FOA">Reject FOA</option>
+          <option value="Sub leader assign engineer">Sub leader assign engineer</option>
+          <option value="other">Other (ระบุเอง)</option>
+        </select>
+        <div class="error-msg" id="foaActivityError">⚠ กรุณาเลือก Activity</div>
+      </div>
+
+      <div class="form-group" id="foaOtherActivityGroup" style="display:none">
+        <label for="foaOtherActivity">ระบุ Activity</label>
+        <input type="text" id="foaOtherActivity" placeholder="ระบุ Activity ที่ต้องการติดตาม" autocomplete="off" spellcheck="false" />
+        <div class="error-msg" id="foaOtherActivityError">⚠ กรุณาระบุ Activity</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="foaInternetId">Internet ID</label>
+          <input type="text" id="foaInternetId" placeholder="88xxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="foaInternetIdError">⚠ กรุณากรอก Internet ID</div>
+        </div>
+        <div class="form-group">
+          <label for="foaCpId">CP ID</label>
+          <input type="text" id="foaCpId" placeholder="CP26-xxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="foaCpIdError">⚠ กรุณากรอก CP ID</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="foaIssueNo">Issue No.</label>
+        <input type="text" id="foaIssueNo" placeholder="S-26-xxxxxxxxx" autocomplete="off" spellcheck="false" />
+        <div class="error-msg" id="foaIssueNoError">⚠ กรุณากรอก Issue No.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="foaRejectDateTime" id="foaRejectDateTimeLabel">วันที่และเวลา Reject FOA</label>
+        <input type="text" id="foaRejectDateTime" placeholder="31/03/2026 14:10:32" autocomplete="off" spellcheck="false" />
+        <div class="error-msg" id="foaRejectDateTimeError">⚠ กรุณากรอกวันที่และเวลา</div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateFoaMail()">
+          <span>⚡</span> Generate Mail
+        </button>
+        <button class="btn btn-success" onclick="sendFoaMail()">
+          <span>📧</span> Send Mail
+        </button>
+        <button class="btn btn-danger" onclick="confirmClearFoa()">
+          <span>🗑</span> Clear
+        </button>
+      </div>
+
+      <div class="preview-header">
+        <label for="foaEmailPreview" style="margin-bottom:0; text-transform:uppercase;">Email Preview</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="copy-toast" id="foaCopyToast">✅ Copied!</span>
+          <button class="btn btn-ghost" style="padding:6px 14px;font-size:13px;" onclick="copyFoaPreview()">
+            📋 Copy
+          </button>
+        </div>
+      </div>
+      <textarea id="foaEmailPreview" rows="12" class="preview-area" readonly placeholder="Generate a mail to see the preview here…"></textarea>
+    </div>
+
+    <!-- ประสาน CC แก้ Package -->
+    <div id="fibreTab" class="panel" role="tabpanel">
+
+      <div class="alert">
+        <span class="alert-icon">📎</span>
+        <strong>หมายเหตุ:</strong> หากมีภาพหน้าจอ Error ให้แนบรูปเพิ่มเติมใน Outlook ก่อนกด Send ด้วยครับ
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fibreInternetId">Internet ID</label>
+          <input type="text" id="fibreInternetId" placeholder="88xxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="fibreInternetIdError">⚠ กรุณากรอก Internet ID</div>
+        </div>
+        <div class="form-group">
+          <label for="fibreIssueNo">Issue No.</label>
+          <input type="text" id="fibreIssueNo" placeholder="S-26-xxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="fibreIssueNoError">⚠ กรุณากรอก Issue No.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fibreSymptom">Symptom</label>
+        <input type="text" id="fibreSymptom" placeholder="FTTH - L3 - Application - WeTV - สิทธิ์ VIP หลุด ไม่ต่ออายุอัตโนมัติ" autocomplete="off" />
+        <div class="error-msg" id="fibreSymptomError">⚠ กรุณากรอก Symptom</div>
+      </div>
+
+      <div class="form-group">
+        <label for="fibreApp">Application</label>
+        <select id="fibreApp">
+          <option value="WeTV">WeTV</option>
+          <option value="MAX">MAX</option>
+          <option value="Disney+">Disney+</option>
+          <option value="iQIYI">iQIYI</option>
+          <option value="VIU">VIU</option>
+          <option value="MONOMAX">MONOMAX</option>
+          <option value="Netflix">Netflix</option>
+          <option value="Prime Video">Prime Video</option>
+          <option value="__other__">Other (ระบุเอง)</option>
+        </select>
+        <div class="form-group" id="fibreAppOtherWrap" style="display:none; margin-top:10px;">
+          <input type="text" id="fibreAppOther" placeholder="ชื่อ Application" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="fibreAppOtherError">⚠ กรุณาระบุ Application</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fibrePackage">Package</label>
+        <input type="text" id="fibrePackage" placeholder="NGB_xxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false" />
+        <div class="error-msg" id="fibrePackageError">⚠ กรุณากรอก Package</div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateFibreMail()">
+          <span>⚡</span> Generate Mail
+        </button>
+        <button class="btn btn-success" onclick="sendFibreMail()">
+          <span>📧</span> Send Mail
+        </button>
+        <button class="btn btn-danger" onclick="confirmClearFibre()">
+          <span>🗑</span> Clear
+        </button>
+      </div>
+
+      <div class="preview-header">
+        <label for="fibreEmailPreview" style="margin-bottom:0; text-transform:uppercase;">Email Preview</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="copy-toast" id="fibreCopyToast">✅ Copied!</span>
+          <button class="btn btn-ghost" style="padding:6px 14px;font-size:13px;" onclick="copyFibrePreview()">
+            📋 Copy
+          </button>
+        </div>
+      </div>
+      <textarea id="fibreEmailPreview" rows="12" class="preview-area" readonly placeholder="Generate a mail to see the preview here…"></textarea>
+    </div>
+
+    <!-- Netflix -->
+    <div id="netflixTab" class="panel" role="tabpanel">
+
+      <!-- Mode toggle -->
+      <div class="form-group">
+        <label>เลือกประเภทคำขอ</label>
+        <div style="display:flex;gap:8px">
+          <button type="button" id="nfModeEmailBtn" class="btn btn-ghost" style="flex:1;border:2px solid var(--accent);background:var(--accent-light);color:var(--accent)" onclick="setNfMode('email')">
+            ✉️ Change Email
+          </button>
+          <button type="button" id="nfModePaiBtn" class="btn btn-ghost" style="flex:1;border:2px solid var(--border)" onclick="setNfMode('pai')">
+            🔌 Disconnect PAI
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ Change Email panel ═══ -->
+      <div id="nfEmailPanel">
+        <div class="form-group">
+          <label for="nfInternetId">Internet ID</label>
+          <input type="text" id="nfInternetId" placeholder="88xxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="nfInternetIdError">⚠ กรุณากรอก Internet ID</div>
+        </div>
+
+        <div class="form-group" style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px;">
+          <label style="margin-bottom:8px; display:block;">Netflix IDs <span style="font-weight:400;color:var(--text-muted);">— วางข้อมูล 3 บรรทัดได้เลย</span></label>
+          <textarea id="nfIds" rows="3" class="input-area" placeholder="netflix_partner_account_identifier : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&#10;netflix_bundle_id : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&#10;netflix_offer_id : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" spellcheck="false"></textarea>
+          <div class="error-msg" id="nfIdsError">⚠ กรุณากรอก Netflix IDs</div>
+        </div>
+
+        <div class="form-group">
+          <label for="nfOldEmail">Activated account email (อีเมลเดิม)</label>
+          <input type="text" id="nfOldEmail" placeholder="oldaccount@example.com" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="nfOldEmailError">⚠ กรุณากรอกอีเมลเดิม</div>
+        </div>
+
+        <div class="form-group">
+          <label for="nfNewEmail">Change email to (อีเมลใหม่)</label>
+          <input type="text" id="nfNewEmail" placeholder="newaccount@example.com" autocomplete="off" spellcheck="false" />
+          <div class="error-msg" id="nfNewEmailError">⚠ กรุณากรอกอีเมลใหม่</div>
+        </div>
+      </div>
+
+      <!-- ═══ Disconnect PAI panel ═══ -->
+      <div id="nfPaiPanel" style="display:none">
+        <div id="nfPaiCircuits"></div>
+        <button type="button" id="nfPaiAddBtn" class="btn btn-ghost" style="width:100%;border:1.5px dashed var(--border);margin-bottom:16px" onclick="addNfCircuit()">
+          ＋ เพิ่มวงจร <span id="nfPaiCountLabel" style="color:var(--text-muted);font-weight:400;margin-left:4px"></span>
+        </button>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generateNfMail()">
+          <span>⚡</span> Generate Mail
+        </button>
+        <button class="btn btn-success" onclick="sendNfMail()">
+          <span>📧</span> Send Mail
+        </button>
+        <button class="btn btn-danger" onclick="confirmClearNf()">
+          <span>🗑</span> Clear
+        </button>
+      </div>
+
+      <div class="preview-header">
+        <label for="nfEmailPreview" style="margin-bottom:0; text-transform:uppercase;">Email Preview</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="copy-toast" id="nfCopyToast">✅ Copied!</span>
+          <button class="btn btn-ghost" style="padding:6px 14px;font-size:13px;" onclick="copyNfPreview()">
+            📋 Copy
+          </button>
+        </div>
+      </div>
+      <textarea id="nfEmailPreview" rows="14" class="preview-area" readonly placeholder="Generate a mail to see the preview here…"></textarea>
+    </div>
+
+  </main>
+</div>
+
+<!-- Clear Modal: Forgot MAX -->
+<div class="modal-overlay" style="display:none" id="clearModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3>🗑 Clear All Fields?</h3>
+    <p>This will remove all entered data. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="clearFields()">Yes, Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear Modal: 3BB DDNS -->
+<div class="modal-overlay" style="display:none" id="clearDdnsModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3>🗑 Clear All Fields?</h3>
+    <p>This will remove all entered data. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeDdnsModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="clearDdnsFields()">Yes, Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear Modal: VDO Support -->
+<div class="modal-overlay" style="display:none" id="clearVdoModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3>🗑 Clear All Fields?</h3>
+    <p>This will remove all entered data. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeVdoModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="clearVdoFields()">Yes, Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear Modal: FOA -->
+<div class="modal-overlay" style="display:none" id="clearFoaModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3>🗑 Clear All Fields?</h3>
+    <p>This will remove all entered data. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeFoaModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="clearFoaFields()">Yes, Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear Modal: ประสาน CC แก้ Package -->
+<div class="modal-overlay" style="display:none" id="clearFibreModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3>🗑 Clear All Fields?</h3>
+    <p>This will remove all entered data. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeFibreModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="clearFibreFields()">Yes, Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear Modal: Netflix -->
+<div class="modal-overlay" style="display:none" id="clearNfModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3>🗑 Clear All Fields?</h3>
+    <p>This will remove all entered data. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeNfModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="clearNfFields()">Yes, Clear</button>
+    </div>
+  </div>
+</div>
+
+
+</div>
+</div><!-- /mainWrap -->
+
+<div class="mbg" id="mbg" onclick="bgClick(event)">
+  <div class="mbox" id="mbox"></div>
+</div>
+
+<!-- JavaScript — loaded in dependency order; all globals are shared -->
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/email-tool.js"></script>
+<script src="js/modmax.js"></script>
+<script src="js/urls.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

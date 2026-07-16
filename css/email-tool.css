@@ -1,0 +1,631 @@
+/* ═══════════════════════════════════════════════
+   EMAIL TOOL — scoped under #emailToolPage
+   ═══════════════════════════════════════════════ */
+/* ── Email Tool: remap vars to shift app design system ── */
+#emailToolPage {
+  --bg:           var(--canvas);
+  --surface:      var(--card);
+  --surface2:     var(--canvas);
+  --border:       var(--line);
+  --text:         var(--ink);
+  --text-muted:   var(--ink2);
+  --accent:       var(--brand2);
+  --accent-hover: #2C56B8;
+  --accent-light: var(--brand-light);
+  --success:      #16A34A;
+  --danger:       #DC2626;
+  --warning-bg:   var(--warn-bg);
+  --warning-border:#FDE047;
+  --warning-text: var(--warn-text);
+  --shadow:       0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+  --shadow-lg:    0 8px 32px rgba(0,0,0,.15);
+  --radius:       var(--r12);
+  --radius-sm:    var(--r8);
+  --transition:   0.2s ease;
+  background:     var(--canvas);
+  flex:1;
+
+}
+#emailToolPage.et-dark {
+
+      --surface: #1a1d27;
+      --surface2: #1e2130;
+      --border: #2d3148;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-light: #1e2a42;
+      --success: #22c55e;
+      --danger: #f87171;
+      --warning-bg: #1f1a0a;
+      --warning-border: #854d0e;
+      --warning-text: #fcd34d;
+      --shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.4);
+
+}
+/* ── Email Tool: font & body ── */
+#emailToolPage {
+  font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+
+}
+#emailToolPage .et-main {
+  flex: 1;
+  padding: 24px 28px;
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+
+}
+#emailToolPage .header-brand {
+
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+}
+#emailToolPage .brand-icon {
+
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--brand2), var(--brand));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 8px rgba(37,99,235,.35);
+
+}
+#emailToolPage .brand-title {
+
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text);
+
+}
+#emailToolPage .brand-badge {
+
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+
+}
+#emailToolPage .theme-toggle:hover {
+ background: var(--accent-light); border-color: var(--accent);
+}
+/* ── Main Content (legacy .main class removed — see .et-main above) ── */
+#emailToolPage /* ── Tab Nav ── */
+    .tab-nav {
+
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+
+}
+#emailToolPage .tab-btn {
+
+      flex: 1 1 auto;
+      min-width: 140px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      white-space: nowrap;
+
+}
+#emailToolPage .tab-btn:hover {
+ background: var(--surface2); color: var(--text);
+}
+#emailToolPage .tab-btn.active {
+
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(37,99,235,.3);
+
+}
+#emailToolPage .tab-btn .tab-icon {
+ font-size: 15px;
+}
+#emailToolPage /* ── Panel ── */
+    .panel {
+
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      display: none;
+      animation: fadeSlide 0.25s ease;
+
+}
+#emailToolPage .panel.active {
+ display: block;
+}
+@keyframes fadeSlide {
+
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+
+}
+#emailToolPage /* ── Alert ── */
+    .alert {
+
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--warning-text);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-size: 13.5px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+
+}
+#emailToolPage .alert-icon {
+ margin-right: 4px;
+}
+#emailToolPage /* ── Form ── */
+    .form-group {
+ margin-bottom: 18px;
+}
+#emailToolPage label {
+
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 7px;
+
+}
+#emailToolPage .input-wrap {
+ position: relative;
+}
+#emailToolPage input[type="text"], #emailToolPage textarea {
+
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 15px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      color: var(--text);
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+      outline: none;
+      font-family: inherit;
+
+
+}
+#emailToolPage input[type="text"]:focus, #emailToolPage textarea:focus {
+
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+      background: var(--surface);
+
+}
+#emailToolPage input[type="text"].error {
+ border-color: var(--danger);
+}
+#emailToolPage input[type="text"].error:focus {
+ box-shadow: 0 0 0 3px rgba(220,38,38,.12);
+}
+#emailToolPage textarea.error, #emailToolPage select.error {
+ border-color: var(--danger);
+}
+#emailToolPage textarea.error:focus, #emailToolPage select.error:focus {
+ box-shadow: 0 0 0 3px rgba(220,38,38,.12);
+}
+#emailToolPage .error-msg {
+
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: 5px;
+      display: none;
+
+}
+#emailToolPage .error-msg.visible {
+ display: block;
+}
+#emailToolPage textarea {
+ resize: vertical; font-size: 14px; line-height: 1.6;
+}
+#emailToolPage textarea.preview-area {
+ min-height: 180px;
+}
+#emailToolPage textarea.input-area {
+ min-height: 80px;
+}
+#emailToolPage /* ── Select ── */
+    select {
+
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 15px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      color: var(--text);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+      font-family: inherit;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+
+}
+#emailToolPage select:focus {
+
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+      background-color: var(--surface);
+
+}
+#emailToolPage /* ── Form Row (2 columns) ── */
+    .form-row {
+
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+
+}
+@media (max-width: 600px) {
+ .form-row { grid-template-columns: 1fr; }
+}
+#emailToolPage /* ── Button Group ── */
+    .btn-group {
+
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+      margin-top: 4px;
+
+}
+#emailToolPage .btn {
+
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex; align-items: center; gap: 7px;
+      letter-spacing: 0.2px;
+
+}
+#emailToolPage .btn:active {
+ transform: scale(.97);
+}
+#emailToolPage .btn-primary {
+ background: var(--accent); color: #fff;
+}
+#emailToolPage .btn-primary:hover {
+ background: var(--accent-hover); box-shadow: 0 3px 10px rgba(37,99,235,.35);
+}
+#emailToolPage .btn-success {
+ background: var(--success); color: #fff;
+}
+#emailToolPage .btn-success:hover {
+ opacity: .88; box-shadow: 0 3px 10px rgba(22,163,74,.35);
+}
+#emailToolPage .btn-danger {
+ background: var(--danger);  color: #fff;
+}
+#emailToolPage .btn-danger:hover {
+ opacity: .88;
+}
+#emailToolPage .btn-ghost {
+
+      background: var(--surface2); color: var(--text-muted);
+      border: 1px solid var(--border);
+
+}
+#emailToolPage .btn-ghost:hover {
+ background: var(--border); color: var(--text);
+}
+#emailToolPage /* ── Preview header ── */
+    .preview-header {
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+
+}
+#emailToolPage .copy-toast {
+
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--success);
+      opacity: 0;
+      transition: opacity 0.3s;
+
+}
+#emailToolPage .copy-toast.show {
+ opacity: 1;
+}
+#emailToolPage /* ── Iframe Panel ── */
+    .iframe-wrap {
+
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-top: 4px;
+
+}
+#emailToolPage iframe {
+
+      width: 100%;
+      height: 82vh;
+      border: none;
+      display: block;
+
+}
+#emailToolPage /* ── Modal ── */
+    .modal-overlay {
+
+      display: flex;
+      position: fixed; inset: 0;
+      background: rgba(11,19,36,.45);
+      z-index: 999;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(3px);
+      opacity: 0; visibility: hidden;
+      transition: opacity .2s ease, visibility 0s linear .2s;
+
+}
+#emailToolPage .modal-overlay.open {
+ opacity: 1; visibility: visible; transition: opacity .2s ease;
+}
+#emailToolPage .modal {
+
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      max-width: 380px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+      transform: scale(.94) translateY(8px);
+      opacity: 0;
+      transition: transform .22s cubic-bezier(.2,.8,.2,1), opacity .18s ease;
+
+}
+#emailToolPage .modal-overlay.open .modal {
+ transform: scale(1) translateY(0); opacity: 1;
+}
+#emailToolPage .modal h3 {
+ font-size: 18px; font-weight: 700; margin-bottom: 10px;
+}
+#emailToolPage .modal p {
+ font-size: 14px; color: var(--text-muted); margin-bottom: 22px;
+}
+#emailToolPage .modal-actions {
+ display: flex; gap: 10px; justify-content: flex-end;
+}
+#emailToolPage /* ── Gender Toggle ── */
+    .gender-bar {
+
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 4px 6px;
+
+}
+#emailToolPage .gender-bar span {
+ font-size: 13px; color: var(--text-muted); font-weight: 500; padding: 0 4px;
+}
+#emailToolPage .gender-btn {
+
+      padding: 5px 16px;
+      border: none;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all var(--transition);
+
+}
+#emailToolPage .gender-btn.active {
+
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(37,99,235,.3);
+
+}
+#emailToolPage /* ── Responsive ── */
+    @media (max-width: 600px) {
+
+      .main { padding: 16px; }
+      .header { padding: 0 16px; }
+      .panel { padding: 18px; }
+      .tab-btn span.tab-label { display: none; }
+      .tab-btn .tab-icon { font-size: 20px; }
+      .brand-badge { display: none; }
+      .btn-group { flex-direction: column; }
+      .btn { justify-content: center; }
+
+}/* Email tool view wrapper */
+#emailToolPage{position:fixed;top:0;right:0;bottom:0;width:min(1040px,94vw);background:var(--canvas);display:flex;flex-direction:column;transform:translateX(100%);transition:.3s transform cubic-bezier(.4,0,.2,1);z-index:400;box-shadow:-10px 0 44px rgba(11,19,36,.28);overflow-y:auto}
+#emailToolPage.et-active{transform:translateX(0)}
+.et-subheader {
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+  padding:8px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.et-back {
+  display:flex;align-items:center;gap:7px;padding:6px 14px;
+  background:var(--brand);color:#fff;border:none;border-radius:var(--r8);
+  font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
+}
+.et-back:hover { background:#163356; }
+.et-title { font-size:14px;font-weight:700;color:var(--ink); }
+
+/* ═══════════════════════════════════════════════
+   MOD MAX — scoped under #modmaxPage
+   ═══════════════════════════════════════════════ */
+#modmaxPage {
+  font-family: 'Noto Sans Thai', 'Segoe UI', sans-serif;
+  color: var(--ink);
+}
+#modmaxPage h1 {
+ font-size: 20px; margin-bottom: 4px; }
+#modmaxPage h2.section-title {
+
+    font-size: 16px;
+    margin: 32px 0 12px 0;
+    border-left: 4px solid var(--brand2);
+    padding-left: 10px;
+  }
+#modmaxPage p.desc {
+ color: var(--ink2); margin-top: 0; margin-bottom: 16px; font-size: 14px; }
+#modmaxPage .grid {
+ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+#modmaxPage @media (max-width: 800px) {
+ .grid { grid-template-columns: 1fr; } }
+#modmaxPage .panel {
+
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r12);
+    padding: 16px;
+  }
+#modmaxPage .panel h3 {
+ font-size: 14px; margin: 0 0 10px 0; color: var(--ink); }
+#modmaxPage textarea {
+
+    width: 100%;
+    height: 260px;
+    font-family: 'IBM Plex Mono', "Consolas", monospace;
+    font-size: 13px;
+    padding: 10px;
+    border: 1px solid var(--line2);
+    border-radius: var(--r8);
+    resize: vertical;
+  }
+#modmaxPage .controls {
+ margin: 14px 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+#modmaxPage button:not(.et-back) {
+
+    background: var(--brand2);
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: var(--r8);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Noto Sans Thai', sans-serif;
+    cursor: pointer;
+    transition: .15s background;
+  }
+#modmaxPage button:hover:not(.et-back) {
+ background: #2C56B8; }
+#modmaxPage button.secondary {
+ background: var(--ink3); }
+#modmaxPage button.secondary:hover {
+ background: var(--ink2); }
+#modmaxPage button.small {
+ padding: 4px 10px; font-size: 12px; }
+#modmaxPage .info {
+ font-size: 13px; color: var(--ink2); }
+#modmaxPage .batch {
+
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--r12);
+    overflow: hidden;
+  }
+#modmaxPage .batch-header {
+
+    background: var(--canvas);
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+#modmaxPage pre {
+
+    margin: 0;
+    padding: 12px;
+    background: #0d1117;
+    color: #c9d1d9;
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+#modmaxPage table {
+
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+#modmaxPage th, #modmaxPage td {
+
+    border: 1px solid var(--line);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+#modmaxPage th {
+ background: var(--canvas); }
+#modmaxPage tr.success td {
+ background: var(--success-bg); }
+#modmaxPage tr.fail td {
+ background: var(--hol-bg); }
+#modmaxPage .badge {
+
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+#modmaxPage .badge.success {
+ background: var(--success-text); color: white; }
+#modmaxPage .badge.fail {
+ background: var(--hol-text); color: white; }
+#modmaxPage .summary {
+ font-size: 13px; margin-bottom: 10px; }
+#modmaxPage .summary b.ok {
+ color: var(--success-text); }
+#modmaxPage .summary b.no {
+ color: var(--hol-text); }
+#modmaxPage{position:fixed;top:0;right:0;bottom:0;width:min(1040px,94vw);background:var(--canvas);display:flex;flex-direction:column;transform:translateX(100%);transition:.3s transform cubic-bezier(.4,0,.2,1);z-index:400;box-shadow:-10px 0 44px rgba(11,19,36,.28);overflow-y:auto}
+#modmaxPage.mm-active{transform:translateX(0)}
+#modmaxPage .mm-container {
+  max-width:100%;margin:0 auto;padding:20px 28px;width:100%;
+}
