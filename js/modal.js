@@ -339,7 +339,7 @@ function editFestival(m, d) {
   mbox.innerHTML = `
     <h3>🎉 วันเทศกาล — ${d} ${MS[m-1]} ${curY}</h3>
     <div class="m-meta" style="font-size:11px;color:var(--ink2)">ใส่ชื่อเทศกาล/งานพิเศษ (จะแสดงแถวสีเหลืองอ่อนในตาราง แต่ไม่นับเป็นวันหยุดประจำปี)</div>
-    <input id="festInput" type="text" value="${existing}"
+    <input id="festInput" type="text" value="${escapeHtml(existing)}"
       placeholder="เช่น ลอยกระทง, วันครอบครัว"
       style="width:100%;padding:9px 12px;border:1.5px solid var(--line2);border-radius:var(--r8);font-size:13px;font-family:inherit;background:var(--canvas);color:var(--ink);outline:none;margin-top:4px">
     <div class="mf">

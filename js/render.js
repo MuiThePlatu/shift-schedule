@@ -113,7 +113,7 @@ function renderTable() {
     // Date cell content
     let dateLabel = `${d} ${MS[m-1]}`;
     if (holN)  dateLabel += `<br><span style="font-size:9px;color:var(--hol-text)">🎌 ${holN}</span>`;
-    if (fest)  dateLabel += `<br><span style="font-size:9px;color:var(--fest-text)">🎉 ${fest}</span>`;
+    if (fest)  dateLabel += `<br><span style="font-size:9px;color:var(--fest-text)">🎉 ${escapeHtml(fest)}</span>`;
     const cells = STAFF.map((s,i) => renderCell(s.id, m, d, i===4, allDeferMaps[s.id])).join('');
     rows += `<tr class="${cls}">
       <td class="fc1" style="text-align:center;font-weight:600;font-size:11px;color:${dc}">${dayN}</td>

@@ -98,6 +98,16 @@ async function initFirebase() {
       overlay.style.display = 'flex';
       document.getElementById('loadingMsg').textContent = 'กำลังโหลดข้อมูล...';
 
+      // ต้องโหลด STAFF จาก Firebase ก่อน renderAll() ครั้งแรกเสมอ (renderTable ฯลฯ อ่าน STAFF แบบ sync)
+      try {
+        await loadStaff();
+      } catch (e) {
+        overlay.style.display = 'none';
+        showSyncBadge('❌ โหลดข้อมูลพนักงานไม่สำเร็จ', '#DC2626');
+        console.error('loadStaff error:', e);
+        return;
+      }
+
       let isFirst = true;
       firebaseDB.ref(getDbPath()).on('value', snap => {
         const remote = snap.val();

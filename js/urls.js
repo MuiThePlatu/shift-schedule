@@ -27,10 +27,10 @@ function renderUrlCards() {
     <div style="background:var(--card);border:1px solid var(--line);border-radius:var(--r12);padding:16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.05)">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
         <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:20px">${u.icon || '🔗'}</span>
+          <span style="font-size:20px">${escapeHtml(u.icon || '🔗')}</span>
           <div>
-            <div style="font-size:13px;font-weight:600;color:var(--ink)">${u.name}</div>
-            ${u.desc ? `<div style="font-size:11px;color:var(--ink2);margin-top:1px">${u.desc}</div>` : ''}
+            <div style="font-size:13px;font-weight:600;color:var(--ink)">${escapeHtml(u.name)}</div>
+            ${u.desc ? `<div style="font-size:11px;color:var(--ink2);margin-top:1px">${escapeHtml(u.desc)}</div>` : ''}
           </div>
         </div>
         <div style="display:flex;gap:4px;flex-shrink:0">
@@ -38,11 +38,15 @@ function renderUrlCards() {
           <button onclick="deleteUrl(${i})" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--ink3);font-size:13px" title="ลบ">✕</button>
         </div>
       </div>
-      <a href="${u.url}" target="_blank" rel="noopener"
+      ${/^https?:\/\//i.test(u.url || '') ? `
+      <a href="${escapeHtml(u.url)}" target="_blank" rel="noopener"
          style="font-size:11px;color:var(--brand2);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:6px 10px;background:var(--brand-light);border-radius:var(--r4);display:block"
-         title="${u.url}">
-        🌐 ${u.url}
-      </a>
+         title="${escapeHtml(u.url)}">
+        🌐 ${escapeHtml(u.url)}
+      </a>` : `
+      <span style="font-size:11px;color:#DC2626;padding:6px 10px;background:#FEE2E2;border-radius:var(--r4);display:block" title="URL ไม่ถูกต้อง (ต้องขึ้นต้นด้วย http:// หรือ https://)">
+        ⚠️ URL ไม่ถูกต้อง: ${escapeHtml(u.url || '')}
+      </span>`}
     </div>`).join('');
 }
 
@@ -57,22 +61,22 @@ function openUrlModal(u) {
     <div class="m-meta">ลิงก์เว็บที่ใช้งานภายในทีม</div>
     <div class="sect">
       <span class="slbl">ชื่อ</span>
-      <input id="urlName" type="text" value="${u.name||''}" placeholder="เช่น Timework, ServiceNow"
+      <input id="urlName" type="text" value="${escapeHtml(u.name||'')}" placeholder="เช่น Timework, ServiceNow"
         style="width:100%;padding:9px 12px;border:1.5px solid var(--line2);border-radius:var(--r8);font-size:13px;font-family:inherit;background:var(--canvas);color:var(--ink);outline:none">
     </div>
     <div class="sect">
       <span class="slbl">URL</span>
-      <input id="urlUrl" type="text" value="${u.url||''}" placeholder="https://..."
+      <input id="urlUrl" type="text" value="${escapeHtml(u.url||'')}" placeholder="https://..."
         style="width:100%;padding:9px 12px;border:1.5px solid var(--line2);border-radius:var(--r8);font-size:13px;font-family:inherit;background:var(--canvas);color:var(--ink);outline:none">
     </div>
     <div class="sect">
       <span class="slbl">คำอธิบาย (ไม่บังคับ)</span>
-      <input id="urlDesc" type="text" value="${u.desc||''}" placeholder="เช่น ระบบลงเวลา, ระบบ Ticket"
+      <input id="urlDesc" type="text" value="${escapeHtml(u.desc||'')}" placeholder="เช่น ระบบลงเวลา, ระบบ Ticket"
         style="width:100%;padding:9px 12px;border:1.5px solid var(--line2);border-radius:var(--r8);font-size:13px;font-family:inherit;background:var(--canvas);color:var(--ink);outline:none">
     </div>
     <div class="sect">
       <span class="slbl">Icon (Emoji)</span>
-      <input id="urlIcon" type="text" value="${u.icon||'🔗'}" maxlength="2"
+      <input id="urlIcon" type="text" value="${escapeHtml(u.icon||'🔗')}" maxlength="2"
         style="width:80px;padding:9px 12px;border:1.5px solid var(--line2);border-radius:var(--r8);font-size:18px;font-family:inherit;background:var(--canvas);color:var(--ink);outline:none;text-align:center">
     </div>
     <div class="mf">
@@ -89,6 +93,7 @@ function saveUrl() {
   const desc = document.getElementById('urlDesc').value.trim();
   const icon = document.getElementById('urlIcon').value.trim() || '🔗';
   if (!name || !url) { toast('กรุณากรอกชื่อและ URL', 'warning'); return; }
+  if (!/^https?:\/\//i.test(url)) { toast('URL ต้องขึ้นต้นด้วย http:// หรือ https:// เท่านั้น', 'warning'); return; }
   const arr = getUrls();
   if (editUrlIndex === -1) arr.push({ name, url, desc, icon });
   else arr[editUrlIndex] = { name, url, desc, icon };

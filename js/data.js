@@ -20,8 +20,16 @@ let firebaseAuth = null;
 let currentUser  = null;
 function getDbPath() { return 'shift' + curY; }
 
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
+}
+
 function load()    { return dbData; }
 function persist(d) {
+  d.updatedBy = currentUser?.email || null;
+  d.updatedAt = Date.now();
   dbData = d;
   _deferCache = {}; // invalidate deferred holiday cache
   if (firebaseDB) {

@@ -1,18 +1,9 @@
 // ═══════════════════════════════════════════════
 //  CONSTANTS
 // ═══════════════════════════════════════════════
-const STAFF = [
-  // App team — A B C D
-  {id:0, name:'pongsakorn.h',  sh:'pongsahu', thName:'พงศกร ฮึกขุนทด',    empId:'567835', team:'App', grp:'A', off:7 },
-  {id:1, name:'pratompob.i',   sh:'pratompi', thName:'ปฐมภพ อินสุรธาร',    empId:'566136', team:'App', grp:'B', off:19},
-  {id:2, name:'wathanyaporn.p',sh:'wathanyl', thName:'วธัญญาพร เปล่งนอก', empId:'567989', team:'App', grp:'C', off:13},
-  {id:3, name:'surabongse.e',  sh:'surabone', thName:'สุรพงษ์ เอกพันธ์',  empId:'568089', team:'App', grp:'D', off:1 },
-  // VAS team — A B C D
-  {id:4, name:'yodsawam',      sh:'yodsawam', thName:'ยศวรรธน์ หมู่หมื่นศรี', empId:'74547',  team:'VAS', grp:'A', off:7 },
-  {id:5, name:'noppawit.t',    sh:'noppawit', thName:'นพวิทย์ ฐานงาม',  empId:'565783', team:'VAS', grp:'B', off:19},
-  {id:6, name:'warinyupa.s',   sh:'warinyus', thName:'วรินยุพา สมศรี', empId:'567441', team:'VAS', grp:'C', off:13},
-  {id:7, name:'warodom.p',     sh:'warodomp', thName:'วโรดม โพธิธีระสกุล',    empId:'77054',  team:'VAS', grp:'D', off:1 },
-];
+// โหลดจาก Firebase (node "staff") หลัง login — ดู loadStaff() ท้ายไฟล์นี้
+// ห้าม hardcode PII (ชื่อจริง/รหัสพนักงาน/อีเมล) ตรงนี้อีก เพราะไฟล์นี้ถูก serve เป็น static asset สาธารณะ
+let STAFF = [];
 
 // วันหยุดประจำปี พ.ศ. 2569 — ประกาศกลุ่มบริษัทเอไอเอส (19 วัน)
 const HOL = new Set([
@@ -77,19 +68,21 @@ const firstName = s => s.thName.split(' ')[0];
 const SHIFT_HOURS = { 'เช้า':'08:00–16:00', 'บ่าย':'14:00–22:00', 'เช้า+บ่าย':'07:00–23:00' };
 
 // ═══════════════════════════════════════════════
-//  PERMISSIONS — email → pid mapping
+//  PERMISSIONS — email → pid mapping (สร้างจาก STAFF[].email หลังโหลดจาก Firebase)
 // ═══════════════════════════════════════════════
-// แก้ email ให้ตรงกับที่สร้างใน Firebase Authentication
-const EMAIL_TO_PID = {
-  'pongsahu@ais.co.th':  0,   // pongsakorn.h  — App A
-  'pratompi@ais.co.th':  1,   // pratompob.i   — App B
-  'wathanyl@ais.co.th':  2,   // wathanyaporn.p — App C
-  'surabone@ais.co.th':  3,   // surabongse.e  — App D
-  'yodsawam@ais.co.th':  4,   // yodsawam       — VAS A
-  'noppawit@ais.co.th':  5,   // noppawit.t    — VAS B
-  'warinyus@ais.co.th':  6,   // warinyupa.s   — VAS C
-  'warodomp@ais.co.th':  7,   // warodom.p     — VAS D
-};
+let EMAIL_TO_PID = {};
+
+// โหลด STAFF + EMAIL_TO_PID จาก Firebase — เรียกครั้งเดียวหลัง login สำเร็จ ก่อน renderAll() ครั้งแรก
+// (node "staff" ถูก gate ด้วย Firebase Rules auth != null เหมือนกับข้อมูลตารางกะ)
+async function loadStaff() {
+  const snap = await firebaseDB.ref('staff').once('value');
+  const raw = snap.val() || {};
+  STAFF = Object.keys(raw)
+    .map(k => ({ id: Number(k), ...raw[k] }))
+    .sort((a, b) => a.id - b.id);
+  EMAIL_TO_PID = {};
+  STAFF.forEach(s => { if (s.email) EMAIL_TO_PID[s.email] = s.id; });
+}
 
 // คืน pid ของ user ที่ login อยู่ (null = ไม่พบ)
 function myPid() {
