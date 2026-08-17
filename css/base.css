@@ -37,6 +37,9 @@ body{font-family:'Noto Sans Thai',sans-serif;font-size:13px;background:var(--can
 .wakebtn.on{background:var(--brand2);border-color:var(--brand2);box-shadow:0 0 0 3px rgba(8,145,178,.25)}
 .wakebtn .wl-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5)}
 .wakebtn.on .wl-dot{background:#fff;box-shadow:0 0 6px #fff}
+.wakebtn.pending{border-color:rgba(253,224,71,.7)}
+.wakebtn.pending .wl-dot{background:#FDE047;box-shadow:0 0 6px rgba(253,224,71,.8);animation:wlPulse 1.4s ease-in-out infinite}
+@keyframes wlPulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 .mnav{display:flex;gap:6px;flex-wrap:wrap;padding:9px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:56px;z-index:200;box-shadow:0 1px 4px rgba(15,23,42,.04)}
 .mb{padding:5px 13px;border:1.5px solid var(--line2);border-radius:var(--r20);cursor:pointer;font-size:11px;font-family:inherit;font-weight:500;background:transparent;color:var(--ink2);transition:.15s all}
