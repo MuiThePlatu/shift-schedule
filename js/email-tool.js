@@ -160,9 +160,7 @@
       const port   = document.getElementById('ddnsPort').value.trim();
       subject = `ลูกค้าแจ้งขอยกเลิก 3BB DDNS Ticket No. ${ticket}`;
       body =
-`Classification: Internal
-
-เรียน ทีม Server & Vas
+`เรียน ทีม Server & Vas
 ลูกค้าแจ้งขอยกเลิก 3BB DDNS ข้อมูลลูกค้าตามรายละเอียดด้านล่าง รบกวนช่วยดำเนินการด้วย${polite}
 
       ชื่อผู้เช่า  : ${tenant}
@@ -174,9 +172,7 @@
       const phone = document.getElementById('ddnsPhone').value.trim();
       subject = `[3BBDDNS] ลูกค้าแจ้งไม่สามารถสมัครใช้งาน 3BB DDNS ได้ Ticket No. ${ticket}`;
       body =
-`Classification: Internal
-
-เรียน ทีม Server & Vas
+`เรียน ทีม Server & Vas
 ลูกค้าแจ้งไม่สามารถสมัครใช้งาน 3BB DDNS ได้พบ error "หมายเลขโทรศัพท์ติดต่อที่ให้ไว้กับ 3BB เบอร์โทรศัพท์มือถือไม่ตรงกับที่ลงทะเบียนไว้" ตามภาพที่แนบ ข้อมูลลูกค้าตามรายละเอียดด้านล่าง รบกวนช่วยดำเนินการด้วย${polite}
 
       ชื่อผู้เช่า  : ${tenant}
@@ -247,9 +243,7 @@ ${body}`;
         label: 'รับสิทธิ์ไม่ได้ — หมายเลขไม่มีแพ็คเกจ HBO MAX',
         subject: (id) => `[MAX] - ลูกค้ารับสิทธิ์ไม่ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
         พบปัญหาไม่สามารถกดรับสิทธิ์ HBO MAX ได้ พบ Error : หมายเลขของคุณไม่มีแพ็คเกจ HBO MAX${note ? '\n        ' + note : ''}
         รบกวนช่วยตรวจสอบด้วย${polite} ขอบคุณ${polite}`
@@ -258,9 +252,7 @@ ${body}`;
         label: 'รับสิทธิ์ไม่ได้ — บัญชีผู้ให้บริการลงทะเบียนไปแล้ว',
         subject: (id) => `[MAX] - ประสานตรวจสอบลูกค้าไม่สามารถรับสิทธิ์ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
         ตรวจสอบสถานะผ่าน Postman ขึ้น Pending ทั้งสองฝั่ง แต่ลูกค้าไม่สามารถรับสิทธิ์ใช้งานได้ ขึ้น Error "บัญชีผู้ให้บริการนี้มีการลงทะเบียนไปแล้ว"${note ? '\n        ' + note : ''}
         รบกวนช่วยตรวจสอบด้วย${polite} ขอบคุณ${polite}`
@@ -269,9 +261,7 @@ ${body}`;
         label: 'Status TERMINATED ทั้งสองฝั่ง + Casanova ไม่มี Package',
         subject: (id) => `[MAX] - ลูกค้ารับสิทธิ์ไม่ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         ขอความอนุเคราะห์ตรวจสอบและแก้ไขปัญหาลูกค้า ${id}
         ตรวจสอบพบ Status AIS : TERMINATED และ MAX : TERMINATED
         ตรวจสอบลูกค้ามี Package HBO MAX แต่ที่ Casanova ไม่มี Package${note ? '\n        ' + note : ''}
@@ -281,9 +271,7 @@ ${body}`;
         label: 'AIS Terminated / MAX ACTIVE — ประสาน Unbind แล้วแต่ยังเป็น Status เดิม',
         subject: (id) => `[MAX] - ประสาน Unbind แต่ยังขึ้น Status MAX: ACTIVE และ AIS: Terminated - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         ขอความอนุเคราะห์ตรวจสอบและแก้ไขปัญหาลูกค้า ${id}
         ตรวจสอบพบ Status AIS : Terminated และ MAX : ACTIVE
         ก่อนหน้านั้นได้ประสาน Unbind ไปแล้วแต่ก็ยังเป็น Status เดิม${note ? '\n        ' + note : ''}
@@ -295,9 +283,7 @@ ${body}`;
         label: 'Subscriber Not Found — รับสิทธิ์ไม่ได้',
         subject: (id) => `[iQIYI] - ลูกค้ารับสิทธิ์ไม่ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
         พบปัญหาไม่สามารถกดรับสิทธิ์ iQIYI ได้ พบ Error : Subscriber Not Found
         ตรวจสอบ Casanova และ IM มี Package ปกติ${note ? '\n        ' + note : ''}
@@ -307,9 +293,7 @@ ${body}`;
         label: 'CMS Error — Account Unblind',
         subject: (id) => `[iQIYI] - ไม่สามารถ CMS iQIYI ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         รบกวนตรวจสอบลูกค้า Internet ID: ${id}
         จะทำการ CMS iQIYI ให้ลูกค้ารับสิทธิ์ใหม่ แต่ไม่สามารถดำเนินการได้ ขึ้น Status Account Unblind${note ? '\n        ' + note : ''}
         รบกวนช่วยตรวจสอบด้วย${polite} ขอบคุณ${polite}`
@@ -320,9 +304,7 @@ ${body}`;
         label: 'Data Not Found — Postman ขึ้น Code 2000',
         subject: (id) => `[Viu] - ประสานตรวจสอบไม่สามารถรับสิทธิ์ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน VDO Support
+`เรียน VDO Support
         ลูกค้าใช้งาน ${pkg} ตรวจสอบสถานะผ่าน Postman ขึ้น Code 2000 และไม่มีข้อมูล
         ตรวจสอบที่ Casanova ลูกค้ามี Package ปกติ แต่เมื่อทำการกรอกข้อมูลในลิงก์รับสิทธิ์และกรอก OTP แล้ว ขึ้น Error "เกิดข้อผิดพลาดอื่นๆ"${note ? '\n        ' + note : ''}
         รบกวนช่วยตรวจสอบด้วย${polite} ขอบคุณ${polite}`
@@ -333,9 +315,7 @@ ${body}`;
         label: 'Subscription Not Found — Postman ไม่พบ Package',
         subject: (id) => `[Disney+] - ลูกค้าพบปัญหารับสิทธิ์ไม่ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน VDO Support
+`เรียน VDO Support
         รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
         ตรวจสอบพบมี Package ใน IM และ Casanova แต่ตรวจสอบใน Postman ไม่พบ Package ขึ้น Error code : "Subscription Not Found"
         พบปัญหาไม่สามารถกดรับสิทธิ์ Disney+ ได้${note ? '\n        ' + note : ''}
@@ -345,9 +325,7 @@ ${body}`;
         label: 'Package Cancelled — Postman ขึ้น Status Cancelled',
         subject: (id) => `[Disney+] - ประสานตรวจสอบ Package Disney+ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
         ตรวจสอบใน Postman ขึ้น Status : Cancelled
         ตรวจสอบใน IM และ Casanova พบมี Package ปกติ${note ? '\n        ' + note : ''}
@@ -357,9 +335,7 @@ ${body}`;
         label: 'Repair Deleted Account — ช่าง 3BB ลบ Account ลูกค้า',
         subject: (id) => `[Disney+] - ประสานตรวจสอบแพ็คเกจ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
         ทางช่าง 3BB ทำการลบ Account ลูกค้า ทำให้ลูกค้าไม่สามารถใช้งาน Disney+ ได้
         รบกวนทาง VDO Support ช่วยแก้ไขเพื่อให้ลูกค้ารับสิทธิ์ใหม่ได้${polite}${note ? '\n        ' + note : ''}`
@@ -370,9 +346,7 @@ ${body}`;
         label: 'Package false — Postman ขึ้น Status false',
         subject: (id) => `[MONOMAX] - ลูกค้าพบปัญหาใช้งาน MONOMAX ไม่ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
         ตรวจสอบพบ Package ใน Postman ขึ้น Status : false${note ? '\n        ' + note : ''}
         รบกวนช่วยตรวจสอบให้ลูกค้าด้วย${polite} ขอบคุณ${polite}`
@@ -383,9 +357,7 @@ ${body}`;
         label: 'Bundle Not Found — ResultCode 40402',
         subject: (id) => `[Netflix] - ประสานตรวจสอบไม่สามารถรับสิทธิ์ได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน VDO Support
+`เรียน VDO Support
         ลูกค้าใช้งาน ${pkg} ตรวจสอบสถานะผ่าน Casanova ขึ้นมี Package แล้ว
         แต่ฝั่ง Postman ขึ้น "ResultCode": "40402", "ErrorCode": "Bundle Not Found" ทำให้ลูกค้าลงทะเบียนรับสิทธิ์ไม่ได้${note ? '\n        ' + note : ''}
         รบกวนช่วยตรวจสอบด้วย${polite} ขอบคุณ${polite}`
@@ -396,9 +368,7 @@ ${body}`;
         label: 'Bundle Not Found — Postman Error 404002',
         subject: (id) => `[Prime] - ประสานตรวจสอบไม่สามารถรับชมได้ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
-`Classification: Internal
-
-เรียน VDO Support
+`เรียน VDO Support
         ลูกค้าใช้งาน Package ${pkg} แจ้งไม่สามารถใช้งาน Prime Video ได้
         ตรวจสอบผ่าน Postman พบ Error 404002 "Bundle Not Found"
         แต่ตรวจสอบผ่าน Casanova และ IM ลูกค้ามี Package ปกติ${note ? '\n        ' + note : ''}
@@ -495,9 +465,7 @@ ${body}`;
       const customError = document.getElementById('vdoErrorOther').value.trim();
       subject = `[${service}] - ประสานตรวจสอบแพ็คเกจ Internet ID: ${id}`;
       body =
-`Classification: Internal
-
-เรียน ทีม VDO Support,
+`เรียน ทีม VDO Support,
         รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
         ${customError}${note ? '\n        ' + note : ''}
         รบกวนช่วยตรวจสอบด้วย${polite} ขอบคุณ${polite}`;
@@ -635,9 +603,7 @@ ${body}`;
 
     const subject = `รบกวนติดตามสถานะ Activity: ${activityText} - Internet ID : ${internetId}`;
     const body =
-`Classification: Internal
-
-เรียนทีม MA Follow up
+`เรียนทีม MA Follow up
 รบกวนติดตามสถานะ Activity: ${activityText}
 CP ID : ${cpId}
 Issue No. : ${issueNo}
@@ -749,9 +715,7 @@ ${body}`;
 
     const subject = `รบกวนตรวจสอบและช่วยประสานงานให้ลูกค้า Internet ID: ${internetId}`;
     const body =
-`Classification: Internal
-
-เรียน CC และผู้เกี่ยวข้อง
+`เรียน CC และผู้เกี่ยวข้อง
     อ้างอิง Issue No. : ${issueNo}  ,Symptom : ${symptom}
     ตรวจสอบงานที่เป็นมาไม่มี Package ${pkg} ทำให้ลูกค้าไม่สามารถใช้งาน Application ${app} ได้
     รบกวนประสานงานหน่วยงานที่เกี่ยวข้องและติดต่อกลับลูกค้า และแนะนำแพ็คเกจลูกค้าเพิ่มเติมด้วย${polite}

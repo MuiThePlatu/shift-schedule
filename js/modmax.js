@@ -262,8 +262,7 @@ function mm_buildMailData() {
   const timestamp = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
   const subject = `[ MAX ] - รบกวนตรวจสอบโปรไฟล์ลูกค้าเนื่องจากได้ดำเนินการ Modify ไม่สำเร็จ - ${timestamp}`;
   const body =
-`Classification: Internal
-เรียน VDO Support,
+`เรียน VDO Support,
     รบกวนตรวจสอบโปรไฟล์ HBO Max ของลูกค้ารายด้านล่างเพิ่มเติม เนื่องจากได้ดำเนินการ Modify แล้ว แต่ไม่สำเร็จ
     รายละเอียดมีดังนี้
 ${tableText}
