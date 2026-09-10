@@ -281,7 +281,7 @@ function mm_generateMail() {
   if (preview) {
     preview.value =
 `To: VDO Support <vdosupport@ais.co.th>
-Cc: VAS_FBB Technical Complaint <vas_fbbtc@ais.co.th>; NOC Helpdesk 3BB <helpdesk3bb@ais.co.th>; Sup_FBB Technical Complaint <sup_fbbtc@ais.co.th>
+Cc: VAS_FBB Technical Complaint <vas_fbbtc@ais.co.th>; 3BB_FBB Technical Complaint <3bb_fbbtc@ais.co.th>; Sup_FBB Technical Complaint <sup_fbbtc@ais.co.th>
 Subject: ${subject}
 
 ${body}`;
@@ -295,7 +295,7 @@ function mm_sendMail() {
   const { subject, body } = mm_buildMailData();
   const crlfBody = body.replace(/\n/g, '\r\n');
   const a = document.createElement('a');
-  a.href = `mailto:vdosupport@ais.co.th?cc=vas_fbbtc@ais.co.th;helpdesk3bb@ais.co.th;sup_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(crlfBody)}`;
+  a.href = `mailto:vdosupport@ais.co.th?cc=vas_fbbtc@ais.co.th;3bb_fbbtc@ais.co.th;sup_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(crlfBody)}`;
   a.target = '_blank';
   a.rel = 'noopener';
   a.style.display = 'none';

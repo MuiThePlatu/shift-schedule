@@ -58,7 +58,7 @@
     const internetId = document.getElementById('internetId').value.trim();
     const privateId  = document.getElementById('privateId').value.trim();
     const body = `Dear WBD Customer Support,\n\nOur customer is having trouble logging in because he forgot the email associated with the ID.\nCould you please provide us with the email that the customer is associated with the ID.\n\nInternet id : ${internetId}\nPrivate ID  : ${privateId}`;
-    const preview = `To: "cx.partnersupport@wbd.com" <cx.partnersupport@wbd.com>; "*cspartners" <cspartners@wbd.com>\nCC: vas_fbbtc@ais.co.th; hv_fbbtc@ais.co.th; helpdesk3bb@ais.co.th\nSubject: Could you please provide us with the email that the customer is associated with the ID - Internet ID: ${internetId}\n\n${body}`;
+    const preview = `To: "cx.partnersupport@wbd.com" <cx.partnersupport@wbd.com>; "*cspartners" <cspartners@wbd.com>\nCC: vas_fbbtc@ais.co.th; hv_fbbtc@ais.co.th; 3bb_fbbtc@ais.co.th\nSubject: Could you please provide us with the email that the customer is associated with the ID - Internet ID: ${internetId}\n\n${body}`;
     document.getElementById('emailPreview').value = preview;
   }
 
@@ -70,7 +70,7 @@
     const subject = encodeURIComponent(`Could you please provide us with the email that the customer is associated with the ID - Internet ID: ${internetId}`);
     const body = encodeURIComponent(`Dear WBD Customer Support,\r\n\r\nOur customer is having trouble logging in because he forgot the email associated with the ID.\r\nCould you please provide us with the email that the customer is associated with the ID.\r\n\r\nInternet id : ${internetId}\r\nPrivate ID  : ${privateId}`);
     const a = document.createElement('a');
-    a.href = `mailto:cx.partnersupport@wbd.com;cspartners@wbd.com?cc=vas_fbbtc@ais.co.th;hv_fbbtc@ais.co.th;helpdesk3bb@ais.co.th&subject=${subject}&body=${body}`;
+    a.href = `mailto:cx.partnersupport@wbd.com;cspartners@wbd.com?cc=vas_fbbtc@ais.co.th;hv_fbbtc@ais.co.th;3bb_fbbtc@ais.co.th&subject=${subject}&body=${body}`;
     a.target = '_blank';
     a.rel = 'noopener';
     a.style.display = 'none';
@@ -188,7 +188,7 @@
     const { subject, body } = buildDdnsData();
     document.getElementById('ddnsEmailPreview').value =
 `To: ISSERVER 3BB <isserver3bb@ais.co.th>
-Cc: NOC Helpdesk 3BB <helpdesk3bb@ais.co.th>
+Cc: 3BB_FBB Technical Complaint <3bb_fbbtc@ais.co.th>
 Subject: ${subject}
 
 ${body}`;
@@ -198,7 +198,7 @@ ${body}`;
     if (!validateDdns()) return;
     const { subject, body } = buildDdnsData();
     const a = document.createElement('a');
-    a.href = `mailto:isserver3bb@ais.co.th?cc=helpdesk3bb@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
+    a.href = `mailto:isserver3bb@ais.co.th?cc=3bb_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
     a.target = '_blank'; a.rel = 'noopener'; a.style.display = 'none';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
@@ -458,7 +458,7 @@ ${body}`;
       ? document.getElementById('vdoServiceOther').value.trim()
       : serviceKey;
 
-    const defaultCc = 'helpdesk3bb@ais.co.th;sup_fbbtc@ais.co.th;vas_fbbtc@ais.co.th';
+    const defaultCc = '3bb_fbbtc@ais.co.th;sup_fbbtc@ais.co.th;vas_fbbtc@ais.co.th';
     let subject, body, cc;
 
     if (errIdx === '__other__') {
@@ -618,7 +618,7 @@ Internet ID : ${internetId}
     const { subject, body } = buildFoaData();
     document.getElementById('foaEmailPreview').value =
 `To: Sup_onsite_tmc <Sup-onsite-tmc@ais.co.th>
-Cc: NOC Helpdesk 3BB <helpdesk3bb@ais.co.th>; Sup_FBB Technical Complaint <sup_fbbtc@ais.co.th>
+Cc: 3BB_FBB Technical Complaint <3bb_fbbtc@ais.co.th>; Sup_FBB Technical Complaint <sup_fbbtc@ais.co.th>
 Subject: ${subject}
 
 ${body}`;
@@ -628,7 +628,7 @@ ${body}`;
     if (!validateFoa()) return;
     const { subject, body } = buildFoaData();
     const a = document.createElement('a');
-    a.href = `mailto:Sup-onsite-tmc@ais.co.th?cc=helpdesk3bb@ais.co.th;sup_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
+    a.href = `mailto:Sup-onsite-tmc@ais.co.th?cc=3bb_fbbtc@ais.co.th;sup_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
     a.target = '_blank'; a.rel = 'noopener'; a.style.display = 'none';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
@@ -730,7 +730,7 @@ ${body}`;
     const { subject, body } = buildFibreData();
     document.getElementById('fibreEmailPreview').value =
 `To: Contact@3bbfibre3.com <contact@3BBFibre3.com>; contactcenter@mimotech.onmicrosoft.com <contactcenter@mimotech.onmicrosoft.com>
-Cc: tossapok@ais.co.th; sup_fbbtc@ais.co.th; helpdesk3bb@ais.co.th
+Cc: tossapok@ais.co.th; sup_fbbtc@ais.co.th; 3bb_fbbtc@ais.co.th
 Subject: ${subject}
 
 ${body}`;
@@ -740,7 +740,7 @@ ${body}`;
     if (!validateFibre()) return;
     const { subject, body } = buildFibreData();
     const a = document.createElement('a');
-    a.href = `mailto:contact@3BBFibre3.com;contactcenter@mimotech.onmicrosoft.com?cc=tossapok@ais.co.th;sup_fbbtc@ais.co.th;helpdesk3bb@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
+    a.href = `mailto:contact@3BBFibre3.com;contactcenter@mimotech.onmicrosoft.com?cc=tossapok@ais.co.th;sup_fbbtc@ais.co.th;3bb_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
     a.target = '_blank'; a.rel = 'noopener'; a.style.display = 'none';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
@@ -985,7 +985,7 @@ Thank you for your support.`;
     const { subject, body } = nfMode === 'pai' ? buildNfPaiData() : buildNfData();
     document.getElementById('nfEmailPreview').value =
 `To: NF Partner Support <partnersupport@netflix.com>
-Cc: NOC Helpdesk 3BB <helpdesk3bb@ais.co.th>; Sup_FBB Technical Complaint <sup_fbbtc@ais.co.th>
+Cc: 3BB_FBB Technical Complaint <3bb_fbbtc@ais.co.th>; Sup_FBB Technical Complaint <sup_fbbtc@ais.co.th>
 Subject: ${subject}
 
 ${body}`;
@@ -996,7 +996,7 @@ ${body}`;
     const { subject, body } = nfMode === 'pai' ? buildNfPaiData() : buildNfData();
     const crlfBody = body.replace(/\n/g, '\r\n');
     const a = document.createElement('a');
-    a.href = `mailto:partnersupport@netflix.com?cc=helpdesk3bb@ais.co.th;sup_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(crlfBody)}`;
+    a.href = `mailto:partnersupport@netflix.com?cc=3bb_fbbtc@ais.co.th;sup_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(crlfBody)}`;
     a.target = '_blank'; a.rel = 'noopener'; a.style.display = 'none';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
