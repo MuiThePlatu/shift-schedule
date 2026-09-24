@@ -629,3 +629,66 @@
 #modmaxPage .mm-container {
   max-width:100%;margin:0 auto;padding:20px 28px;width:100%;
 }
+
+/* ═══════════════════════════════════════════════
+   TRIG AAF — scoped under #trigaafPage
+   ═══════════════════════════════════════════════ */
+#trigaafPage {
+  position:fixed;top:0;right:0;bottom:0;width:min(1040px,94vw);background:var(--canvas);
+  display:flex;flex-direction:column;transform:translateX(100%);
+  transition:.3s transform cubic-bezier(.4,0,.2,1);z-index:400;
+  box-shadow:-10px 0 44px rgba(11,19,36,.28);overflow-y:auto;
+  font-family:'Noto Sans Thai','Segoe UI',sans-serif;color:var(--ink);
+}
+#trigaafPage.ta-active { transform:translateX(0); }
+#trigaafPage .ta-container { max-width:100%;margin:0 auto;padding:20px 28px;width:100%; }
+#trigaafPage h1 { font-size:20px;margin-bottom:4px; }
+#trigaafPage h2.section-title {
+  font-size:16px;margin:32px 0 12px 0;border-left:4px solid var(--brand2);padding-left:10px;
+}
+#trigaafPage p.desc { color:var(--ink2);margin-top:0;margin-bottom:16px;font-size:14px; }
+#trigaafPage .grid { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
+@media (max-width:800px) { #trigaafPage .grid { grid-template-columns:1fr; } }
+#trigaafPage .panel {
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r12);padding:16px;
+}
+#trigaafPage .panel h3 { font-size:14px;margin:0 0 10px 0;color:var(--ink); }
+#trigaafPage .panel h3 .sub { font-weight:400;color:var(--ink2);font-size:12px; }
+#trigaafPage .panel-head {
+  display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;
+}
+#trigaafPage .panel-head h3 { margin:0; }
+#trigaafPage textarea {
+  width:100%;height:220px;font-family:'IBM Plex Mono',"Consolas",monospace;font-size:12px;
+  padding:10px;border:1px solid var(--line2);border-radius:var(--r8);resize:vertical;
+  white-space:pre;overflow-wrap:normal;overflow-x:auto;
+}
+#trigaafPage textarea[readonly] { background:var(--canvas);color:var(--ink2); }
+#trigaafPage .controls {
+  margin:14px 0 0;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;
+}
+#trigaafPage .fld {
+  display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink2);
+}
+#trigaafPage .fld input {
+  font-family:'IBM Plex Mono',"Consolas",monospace;font-size:13px;padding:8px 10px;
+  border:1px solid var(--line2);border-radius:var(--r8);width:180px;color:var(--ink);
+}
+#trigaafPage button:not(.et-back) {
+  background:var(--brand2);color:#fff;border:none;padding:9px 18px;border-radius:var(--r8);
+  font-size:13px;font-weight:600;font-family:'Noto Sans Thai',sans-serif;cursor:pointer;
+  transition:.15s background;
+}
+#trigaafPage button:hover:not(.et-back) { background:#2C56B8; }
+#trigaafPage button.secondary { background:var(--ink3); }
+#trigaafPage button.secondary:hover { background:var(--ink2); }
+#trigaafPage button.small { padding:4px 12px;font-size:12px; }
+#trigaafPage .info { font-size:13px;color:var(--ink2);margin:0; }
+#trigaafPage .summary { font-size:13px; }
+#trigaafPage .summary b.ok { color:var(--success-text); }
+#trigaafPage .summary b.no { color:var(--hol-text); }
+#trigaafPage table { width:100%;border-collapse:collapse;font-size:13px; }
+#trigaafPage th, #trigaafPage td {
+  border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top;
+}
+#trigaafPage th { background:var(--canvas); }

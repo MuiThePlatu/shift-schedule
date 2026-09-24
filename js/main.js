@@ -161,6 +161,7 @@ function showView(v) {
   const email    = document.getElementById('emailToolPage');
   const urlsPage = document.getElementById('urlsPage');
   const modmaxPage = document.getElementById('modmaxPage');
+  const trigaafPage = document.getElementById('trigaafPage');
   const backdrop = document.getElementById('panelBackdrop');
 
   // Reset all overlay panels (schedule dashboard stays visible underneath)
@@ -168,6 +169,7 @@ function showView(v) {
   email.classList.remove('et-active');
   if (urlsPage) urlsPage.style.transform = 'translateX(100%)';
   if (modmaxPage) modmaxPage.classList.remove('mm-active');
+  if (trigaafPage) trigaafPage.classList.remove('ta-active');
   if (backdrop) backdrop.classList.remove('on');
 
   if (v === 'emailtool') {
@@ -175,6 +177,9 @@ function showView(v) {
     if (backdrop) backdrop.classList.add('on');
   } else if (v === 'modmax') {
     if (modmaxPage) modmaxPage.classList.add('mm-active');
+    if (backdrop) backdrop.classList.add('on');
+  } else if (v === 'trigaaf') {
+    if (trigaafPage) { trigaafPage.classList.add('ta-active'); ta_initDefaults(); }
     if (backdrop) backdrop.classList.add('on');
   } else if (v === 'urls') {
     if (urlsPage) { urlsPage.style.transform = 'translateX(0)'; renderUrlCards(); }

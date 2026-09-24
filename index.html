@@ -74,6 +74,10 @@
       <span class="sm-icon" style="background:#DBEAFE">🔄</span>
       <span class="sm-txt">Mod MAX<small>แปลง ID → JSON + ตรวจสอบ Postman</small></span>
     </button>
+    <button class="sm-item" onclick="closeSideMenu();showView('trigaaf')">
+      <span class="sm-icon" style="background:#FEF3C7">📡</span>
+      <span class="sm-txt">Trig AAF<small>แปลง AmfCounterDetail → คำสั่ง curl</small></span>
+    </button>
     <button class="sm-item" onclick="closeSideMenu();showView('urls')">
       <span class="sm-icon purple">🔗</span>
       <span class="sm-txt">Internal URLs<small>ลิงก์เว็บที่ใช้งานในทีม</small></span>
@@ -258,6 +262,64 @@
       <h3>ผลลัพธ์ที่จับคู่แล้ว</h3>
       <div id="resultOutput"><p class="info">ยังไม่มีข้อมูล — ทำขั้นตอนที่ 1 ก่อน แล้ววางผลลัพธ์ JSON ที่นี่</p></div>
     </div>
+  </div>
+</div>
+
+
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     TRIG AAF PAGE
+     ═══════════════════════════════════════════════ -->
+<div id="trigaafPage">
+  <div class="et-subheader">
+    <button class="et-back" onclick="showView('schedule')" title="ปิดหน้าต่าง">✕ ปิด</button>
+    <span class="et-title">📡 Trig AAF <span class="brand-badge" style="background:var(--app-light);color:var(--app-dark);font-size:10px;padding:2px 8px;border-radius:20px;">AIS Internal</span></span>
+  </div>
+
+<div class="ta-container">
+  <h1>📡 แปลง AmfCounterDetail เป็นคำสั่ง curl สำหรับ Trig AAF</h1>
+  <p class="desc">วางข้อมูล AmfCounterDetail ทั้งก้อน แล้วกด Generate — ระบบจะอ่านเฉพาะ child ที่ counterType = partnerstb
+  แล้วแยกคำสั่งตาม wSubTtType (5 หลักแรกของ appId): 30207 → WETV, 30091 → iQIYI</p>
+
+  <h2 class="section-title">ขั้นตอนที่ 1: วางข้อมูลดิบ</h2>
+  <div class="panel">
+    <h3>ข้อมูล AmfCounterDetail (วางได้หลาย package)</h3>
+    <textarea id="taInput" placeholder="8881513754;Text:AmfCounterDetail=1008;NGB_PLAY ASIAN 99Baht 12Months;...;OK."></textarea>
+    <div class="controls">
+      <label class="fld">เลขเริ่มต้น commandId
+        <input type="number" id="taStartSeq" min="1" step="1" value="1">
+      </label>
+      <label class="fld">วันที่ commandId (YYYYMMDD)
+        <input type="text" id="taDate" inputmode="numeric" maxlength="8" placeholder="YYYYMMDD">
+      </label>
+      <button onclick="ta_generateUI()" title="แปลงข้อมูลที่วางเป็นคำสั่ง curl">Generate</button>
+      <button class="secondary" onclick="ta_clear()">ล้างข้อมูล</button>
+    </div>
+  </div>
+
+  <h2 class="section-title">ขั้นตอนที่ 2: คำสั่ง curl</h2>
+  <div class="grid">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Trig AAF WETV <span class="sub">(wSubTtType 30207)</span></h3>
+        <button class="small" onclick="ta_copy('taOutWetv', this)">Copy</button>
+      </div>
+      <textarea id="taOutWetv" readonly placeholder="ยังไม่มีข้อมูล"></textarea>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Trig AAF iQIYI <span class="sub">(wSubTtType 30091)</span></h3>
+        <button class="small" onclick="ta_copy('taOutIqiyi', this)">Copy</button>
+      </div>
+      <textarea id="taOutIqiyi" readonly placeholder="ยังไม่มีข้อมูล"></textarea>
+    </div>
+  </div>
+
+  <h2 class="section-title">สรุป</h2>
+  <div class="panel">
+    <div id="taSummary" class="summary"><p class="info">ยังไม่มีข้อมูล — วางข้อมูลแล้วกดปุ่ม "Generate"</p></div>
   </div>
 </div>
 
@@ -821,6 +883,7 @@
 <script src="js/modal.js"></script>
 <script src="js/email-tool.js"></script>
 <script src="js/modmax.js"></script>
+<script src="js/trigaaf.js"></script>
 <script src="js/urls.js"></script>
 <script src="js/main.js"></script>
 </body>
