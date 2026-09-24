@@ -617,7 +617,7 @@ Internet ID : ${internetId}
     if (!validateFoa()) return;
     const { subject, body } = buildFoaData();
     document.getElementById('foaEmailPreview').value =
-`To: Sup_onsite_tmc <Sup-onsite-tmc@ais.co.th>
+`To: Sup_onsite_tmc <Sup-onsite-tmc@ais.co.th>; BB Maintenance Management <sc-bbmm@ais.co.th>
 Cc: 3BB_FBB Technical Complaint <3bb_fbbtc@ais.co.th>; Sup_FBB Technical Complaint <sup_fbbtc@ais.co.th>
 Subject: ${subject}
 
@@ -628,7 +628,7 @@ ${body}`;
     if (!validateFoa()) return;
     const { subject, body } = buildFoaData();
     const a = document.createElement('a');
-    a.href = `mailto:Sup-onsite-tmc@ais.co.th?cc=3bb_fbbtc@ais.co.th;sup_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
+    a.href = `mailto:Sup-onsite-tmc@ais.co.th;sc-bbmm@ais.co.th?cc=3bb_fbbtc@ais.co.th;sup_fbbtc@ais.co.th&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.replace(/\n/g,"\r\n"))}`;
     a.target = '_blank'; a.rel = 'noopener'; a.style.display = 'none';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
