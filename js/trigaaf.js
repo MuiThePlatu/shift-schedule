@@ -2,7 +2,7 @@
 //  TRIG AAF JS — แปลง AmfCounterDetail → คำสั่ง curl Trig AAF
 // ═══════════════════════════════════════════════
 
-const TA_TEMPLATE = 'curl -X POST http://10.198.99.82:8001/api/v1/aaf/pushNotificationInfo.json -d \'{"commandId": "{commandId}","eventType":"reactive","subscriptionId":"3|{msisdn}","publicId":"","packageNo":"{packageNo}","packageName":"{packageName}","packageStartTime":"{start}","packageExpiryTime":"{expiry}","listOfServiceId":[{"serviceId":""}],"listOfApp":[{"groupId": "1","serviceId":"67","counterType":"partnerstb","listOfAppId":[{"appId":"{appId}"}]}]}\'';
+const TA_TEMPLATE = 'curl -X POST http://10.198.99.82:8001/api/v1/aaf/pushNotificationInfo.json -d \'{"commandId": "{commandId}","eventType":"{eventType}","subscriptionId":"3|{msisdn}","publicId":"","packageNo":"{packageNo}","packageName":"{packageName}","packageStartTime":"{start}","packageExpiryTime":"{expiry}","listOfServiceId":[{"serviceId":""}],"listOfApp":[{"groupId": "1","serviceId":"67","counterType":"partnerstb","listOfAppId":[{"appId":"{appId}"}]}]}\'';
 
 const TA_CHILD_MARKER   = 'Text:ChildCounterEntry=';
 const TA_PKG_MARKER     = 'Text:AmfCounterDetail=';
@@ -106,6 +106,7 @@ function ta_parse(raw) {
 function ta_buildCommand(pkg, appId, commandId) {
   return TA_TEMPLATE
     .replace('{commandId}',   commandId)
+    .replace('{eventType}',   appId.slice(0, 5) === TA_IQIYI ? 'activate' : 'reactive')
     .replace('{msisdn}',      pkg.msisdn)
     .replace('{packageNo}',   pkg.packageNo)
     .replace('{packageName}', pkg.packageName)

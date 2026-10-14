@@ -18,7 +18,7 @@ const INPUT = [
 ].join('\n');
 
 const EXPECT_IQIYI =
-  'curl -X POST http://10.198.99.82:8001/api/v1/aaf/pushNotificationInfo.json -d \'{"commandId": "AISPLAY_By_NOC_20260923_000001","eventType":"reactive","subscriptionId":"3|8881513754","publicId":"","packageNo":"1008","packageName":"NGB_PLAY ASIAN 99Baht 12Months","packageStartTime":"20260821212850","packageExpiryTime":"20270821000000","listOfServiceId":[{"serviceId":""}],"listOfApp":[{"groupId": "1","serviceId":"67","counterType":"partnerstb","listOfAppId":[{"appId":"3009100018"}]}]}\'';
+  'curl -X POST http://10.198.99.82:8001/api/v1/aaf/pushNotificationInfo.json -d \'{"commandId": "AISPLAY_By_NOC_20260923_000001","eventType":"activate","subscriptionId":"3|8881513754","publicId":"","packageNo":"1008","packageName":"NGB_PLAY ASIAN 99Baht 12Months","packageStartTime":"20260821212850","packageExpiryTime":"20270821000000","listOfServiceId":[{"serviceId":""}],"listOfApp":[{"groupId": "1","serviceId":"67","counterType":"partnerstb","listOfAppId":[{"appId":"3009100018"}]}]}\'';
 
 const EXPECT_WETV =
   'curl -X POST http://10.198.99.82:8001/api/v1/aaf/pushNotificationInfo.json -d \'{"commandId": "AISPLAY_By_NOC_20260923_000002","eventType":"reactive","subscriptionId":"3|8881513754","publicId":"","packageNo":"1008","packageName":"NGB_PLAY ASIAN 99Baht 12Months","packageStartTime":"20260821212850","packageExpiryTime":"20270821000000","listOfServiceId":[{"serviceId":""}],"listOfApp":[{"groupId": "1","serviceId":"67","counterType":"partnerstb","listOfAppId":[{"appId":"3020710036"}]}]}\'';
