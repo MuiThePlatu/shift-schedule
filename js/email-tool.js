@@ -322,6 +322,16 @@ ${body}`;
         รบกวนช่วยตรวจสอบด้วย${polite} ขอบคุณ${polite}`
       },
       {
+        label: 'Customer Not Found — Postman ไม่พบ Package',
+        subject: (id) => `[Disney+] - ลูกค้าพบปัญหารับสิทธิ์ไม่ได้ - Internet ID: ${id}`,
+        body: (id, pkg, note) =>
+`เรียน VDO Support
+        รบกวนตรวจสอบลูกค้า Internet ID: ${id} ใช้งานแพ็คเกจ ${pkg}
+        ตรวจสอบพบมี Package ใน IM และ Casanova แต่ตรวจสอบใน Postman ไม่พบ Package ขึ้น Error code : "Customer Not Found"
+        พบปัญหาไม่สามารถกดรับสิทธิ์ Disney+ ได้${note ? '\n        ' + note : ''}
+        รบกวนช่วยตรวจสอบด้วย${polite} ขอบคุณ${polite}`
+      },
+      {
         label: 'Package Cancelled — Postman ขึ้น Status Cancelled',
         subject: (id) => `[Disney+] - ประสานตรวจสอบ Package Disney+ - Internet ID: ${id}`,
         body: (id, pkg, note) =>
