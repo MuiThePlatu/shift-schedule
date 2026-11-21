@@ -2,7 +2,7 @@
 const { ta_parse, ta_generate } = require('../js/trigaaf.js');
 
 // ───────────────────────────────────────────────
-// ข้อมูลทดสอบ 3 package (1008 = ใช้ได้, 1005 + 1009 = ต้องถูกข้าม)
+// ข้อมูลทดสอบ 3 package (1008 + 1005 = ใช้ได้, 1009 = ต้องถูกข้าม)
 // จัดรูปแบบตามสเปก: ขึ้น package ใหม่ด้วย "<เบอร์>;Text:AmfCounterDetail=",
 // บรรทัดต่อขึ้นต้นด้วย ";;;;" และ record จบด้วย ";OK."
 // ───────────────────────────────────────────────
@@ -19,6 +19,9 @@ const INPUT = [
 
 const EXPECT_IQIYI =
   'curl -X POST http://10.198.99.82:8001/api/v1/aaf/pushNotificationInfo.json -d \'{"commandId": "AISPLAY_By_NOC_20260923_000001","eventType":"activate","subscriptionId":"3|8881513754","publicId":"","packageNo":"1008","packageName":"NGB_PLAY ASIAN 99Baht 12Months","packageStartTime":"20260821212850","packageExpiryTime":"20270821000000","listOfServiceId":[{"serviceId":""}],"listOfApp":[{"groupId": "1","serviceId":"67","counterType":"partnerstb","listOfAppId":[{"appId":"3009100018"}]}]}\'';
+
+const EXPECT_MONOMAX =
+  'curl -X POST http://10.198.99.82:8001/api/v1/aaf/pushNotificationInfo.json -d \'{"commandId": "AISPLAY_By_NOC_20260923_000003","eventType":"activate","subscriptionId":"3|8881513754","publicId":"","packageNo":"1005","packageName":"NGB_PLAY PREMIUM 199Baht 12Months","packageStartTime":"20260821212850","packageExpiryTime":"20270821000000","listOfServiceId":[{"serviceId":""}],"listOfApp":[{"groupId": "1","serviceId":"67","counterType":"partnerstb","listOfAppId":[{"appId":"5002800016"}]}]}\'';
 
 const EXPECT_WETV =
   'curl -X POST http://10.198.99.82:8001/api/v1/aaf/pushNotificationInfo.json -d \'{"commandId": "AISPLAY_By_NOC_20260923_000002","eventType":"reactive","subscriptionId":"3|8881513754","publicId":"","packageNo":"1008","packageName":"NGB_PLAY ASIAN 99Baht 12Months","packageStartTime":"20260821212850","packageExpiryTime":"20270821000000","listOfServiceId":[{"serviceId":""}],"listOfApp":[{"groupId": "1","serviceId":"67","counterType":"partnerstb","listOfAppId":[{"appId":"3020710036"}]}]}\'';
@@ -57,19 +60,20 @@ check('กล่อง iQIYI มี 1 คำสั่ง', res.iqiyi.length, 1);
 check('กล่อง WETV มี 1 คำสั่ง', res.wetv.length, 1);
 check('คำสั่ง Trig AAF iQIYI ตรงทุกตัวอักษร', res.iqiyi[0], EXPECT_IQIYI);
 check('คำสั่ง Trig AAF WETV ตรงทุกตัวอักษร', res.wetv[0], EXPECT_WETV);
+check('กล่อง Monomax มี 1 คำสั่ง', res.monomax.length, 1);
+check('คำสั่ง Trig AAF Monomax ตรงทุกตัวอักษร', res.monomax[0], EXPECT_MONOMAX);
 
 // ── ส่วนสรุป: appId ที่ถูกข้าม ────────────────────
-check('ข้าม appId 2 ตัว', res.skipped.length, 2);
-check('ข้าม 5002800016 (package 1005)',
-  `${res.skipped[0].packageNo}/${res.skipped[0].appId}/${res.skipped[0].wSubTtType}`, '1005/5002800016/50028');
+check('ข้าม appId 1 ตัว', res.skipped.length, 1);
 check('ข้าม 3003710081 (package 1009)',
-  `${res.skipped[1].packageNo}/${res.skipped[1].appId}/${res.skipped[1].wSubTtType}`, '1009/3003710081/30037');
+  `${res.skipped[0].packageNo}/${res.skipped[0].appId}/${res.skipped[0].wSubTtType}`, '1009/3003710081/30037');
 
 // ── กรณีไม่พบข้อมูล ────────────────────────────
 const empty = ta_generate('', 1, '20260923');
 check('ข้อมูลว่าง → ไม่มี package', empty.packages.length, 0);
 check('ข้อมูลว่าง → WETV ว่าง', empty.wetv.length, 0);
 check('ข้อมูลว่าง → iQIYI ว่าง', empty.iqiyi.length, 0);
+check('ข้อมูลว่าง → Monomax ว่าง', empty.monomax.length, 0);
 
 // ── เลขลำดับเริ่มต้นอื่น ─────────────────────────
 const res50 = ta_generate(INPUT, 50, '20260923');

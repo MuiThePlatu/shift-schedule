@@ -280,7 +280,7 @@
 <div class="ta-container">
   <h1>📡 แปลง AmfCounterDetail เป็นคำสั่ง curl สำหรับ Trig AAF</h1>
   <p class="desc">วางข้อมูล AmfCounterDetail ทั้งก้อน แล้วกด Generate — ระบบจะอ่านเฉพาะ child ที่ counterType = partnerstb
-  แล้วแยกคำสั่งตาม wSubTtType (5 หลักแรกของ appId): 30207 → WETV, 30091 → iQIYI</p>
+  แล้วแยกคำสั่งตาม wSubTtType (5 หลักแรกของ appId): 30207 → WETV, 30091 → iQIYI, 50028 → Monomax</p>
 
   <h2 class="section-title">ขั้นตอนที่ 1: วางข้อมูลดิบ</h2>
   <div class="panel">
@@ -314,6 +314,14 @@
         <button class="small" onclick="ta_copy('taOutIqiyi', this)">Copy</button>
       </div>
       <textarea id="taOutIqiyi" readonly placeholder="ยังไม่มีข้อมูล"></textarea>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Trig AAF Monomax <span class="sub">(wSubTtType 50028)</span></h3>
+        <button class="small" onclick="ta_copy('taOutMonomax', this)">Copy</button>
+      </div>
+      <textarea id="taOutMonomax" readonly placeholder="ยังไม่มีข้อมูล"></textarea>
     </div>
   </div>
 

@@ -9,6 +9,9 @@ const TA_PKG_MARKER     = 'Text:AmfCounterDetail=';
 const TA_COUNTER_OFFSET = 4;        // ช่องที่ 5 นับจากช่อง ChildCounterEntry
 const TA_WETV           = '30207';
 const TA_IQIYI          = '30091';
+const TA_MONOMAX        = '50028';
+// wSubTtType ที่ใช้ eventType = activate (ที่เหลือใช้ reactive)
+const TA_ACTIVATE_TYPES = [TA_IQIYI, TA_MONOMAX];
 
 // บรรทัดที่ขึ้นต้นด้วย "<เบอร์>;Text:AmfCounterDetail=" คือจุดเริ่ม package ใหม่
 const TA_PKG_START_RE = /^\s*\d+\s*;\s*Text:AmfCounterDetail=/;
@@ -106,7 +109,7 @@ function ta_parse(raw) {
 function ta_buildCommand(pkg, appId, commandId) {
   return TA_TEMPLATE
     .replace('{commandId}',   commandId)
-    .replace('{eventType}',   appId.slice(0, 5) === TA_IQIYI ? 'activate' : 'reactive')
+    .replace('{eventType}',   TA_ACTIVATE_TYPES.includes(appId.slice(0, 5)) ? 'activate' : 'reactive')
     .replace('{msisdn}',      pkg.msisdn)
     .replace('{packageNo}',   pkg.packageNo)
     .replace('{packageName}', pkg.packageName)
@@ -115,11 +118,13 @@ function ta_buildCommand(pkg, appId, commandId) {
     .replace('{appId}',       appId);
 }
 
-// สร้างคำสั่งทั้งหมด — เลขลำดับรันต่อเนื่องข้ามทั้ง 2 กล่อง
+// สร้างคำสั่งทั้งหมด — เลขลำดับรันต่อเนื่องข้ามทุกกล่อง
 function ta_generate(raw, startSeq, dateStr) {
   const packages = ta_parse(raw);
   const wetv = [];
   const iqiyi = [];
+  const monomax = [];
+  const buckets = { [TA_WETV]: wetv, [TA_IQIYI]: iqiyi, [TA_MONOMAX]: monomax };
   const skipped = [];
   let seq = Number(startSeq) || 1;
 
@@ -129,17 +134,17 @@ function ta_generate(raw, startSeq, dateStr) {
       .forEach(child => {
         child.appIds.forEach(appId => {
           const wSubTtType = appId.slice(0, 5);
-          if (wSubTtType !== TA_WETV && wSubTtType !== TA_IQIYI) {
+          if (!buckets[wSubTtType]) {
             skipped.push({ appId, wSubTtType, packageNo: pkg.packageNo, msisdn: pkg.msisdn });
             return;
           }
           const commandId = 'AISPLAY_By_NOC_' + dateStr + '_' + ta_pad6(seq++);
-          (wSubTtType === TA_WETV ? wetv : iqiyi).push(ta_buildCommand(pkg, appId, commandId));
+          buckets[wSubTtType].push(ta_buildCommand(pkg, appId, commandId));
         });
       });
   });
 
-  return { packages, wetv, iqiyi, skipped, nextSeq: seq };
+  return { packages, wetv, iqiyi, monomax, skipped, nextSeq: seq };
 }
 
 // ═══════════════════════════════════════════════
@@ -171,17 +176,19 @@ function ta_generateUI() {
 
   document.getElementById('taOutWetv').value  = res.wetv.length  ? res.wetv.join('\n')  : 'ไม่พบ';
   document.getElementById('taOutIqiyi').value = res.iqiyi.length ? res.iqiyi.join('\n') : 'ไม่พบ';
+  document.getElementById('taOutMonomax').value = res.monomax.length ? res.monomax.join('\n') : 'ไม่พบ';
 
   const summary = document.getElementById('taSummary');
   let html = `<div>อ่าน package ได้ <b class="ok">${res.packages.length}</b> รายการ — `
            + `Trig AAF WETV <b class="ok">${res.wetv.length}</b> คำสั่ง, `
-           + `Trig AAF iQIYI <b class="ok">${res.iqiyi.length}</b> คำสั่ง</div>`;
+           + `Trig AAF iQIYI <b class="ok">${res.iqiyi.length}</b> คำสั่ง, `
+           + `Trig AAF Monomax <b class="ok">${res.monomax.length}</b> คำสั่ง</div>`;
 
   if (res.skipped.length) {
     const rows = res.skipped.map(s =>
       `<tr><td>${ta_esc(s.packageNo)}</td><td>${ta_esc(s.appId)}</td><td>${ta_esc(s.wSubTtType)}</td></tr>`
     ).join('');
-    html += `<div style="margin-top:10px">ข้ามไป <b class="no">${res.skipped.length}</b> appId เพราะ wSubTtType ไม่ใช่ 30207/30091</div>`
+    html += `<div style="margin-top:10px">ข้ามไป <b class="no">${res.skipped.length}</b> appId เพราะ wSubTtType ไม่ใช่ 30207/30091/50028</div>`
           + `<table style="margin-top:6px"><tr><th>packageNo</th><th>appId</th><th>wSubTtType</th></tr>${rows}</table>`;
   } else if (res.packages.length) {
     html += `<div style="margin-top:10px">ไม่มี appId ที่ถูกข้าม</div>`;
@@ -209,6 +216,7 @@ function ta_clear() {
   document.getElementById('taInput').value = '';
   document.getElementById('taOutWetv').value = '';
   document.getElementById('taOutIqiyi').value = '';
+  document.getElementById('taOutMonomax').value = '';
   document.getElementById('taSummary').innerHTML = '<p class="info">ยังไม่มีข้อมูล — วางข้อมูลแล้วกดปุ่ม "Generate"</p>';
 }
 
